@@ -108,20 +108,54 @@ export function deleteStack(id: string): void {
 
 // ---------- auto-save ----------
 
-let autoSaveTimer: ReturnType<typeof setTimeout> | null = null;
+export interface AutoSaver {
+  /** Schedule a debounced save. Resets the timer on each call. */
+  save(stack: WildCardStack): void;
+  /** Cancel any pending debounced save. */
+  cancel(): void;
+  /** Whether a save is currently pending. */
+  pending(): boolean;
+}
+
+/**
+ * Create a standalone auto-saver instance with its own timer state.
+ * Useful when multiple independent save contexts are needed.
+ */
+export function createAutoSaver(
+  debounceMs = AUTOSAVE_DEBOUNCE_MS,
+): AutoSaver {
+  let timer: ReturnType<typeof setTimeout> | null = null;
+
+  return {
+    save(stack: WildCardStack): void {
+      if (timer !== null) clearTimeout(timer);
+      timer = setTimeout(() => {
+        saveStack(stack);
+        timer = null;
+      }, debounceMs);
+    },
+    cancel(): void {
+      if (timer !== null) {
+        clearTimeout(timer);
+        timer = null;
+      }
+    },
+    pending(): boolean {
+      return timer !== null;
+    },
+  };
+}
+
+/** Default auto-saver instance used by the convenience `autoSave` function. */
+const defaultAutoSaver = createAutoSaver();
 
 /**
  * Debounced save — waits 500ms of inactivity before persisting.
  * Each call resets the timer, so rapid edits only trigger one write.
+ * Convenience wrapper around the default `createAutoSaver()` instance.
  */
 export function autoSave(stack: WildCardStack): void {
-  if (autoSaveTimer !== null) {
-    clearTimeout(autoSaveTimer);
-  }
-  autoSaveTimer = setTimeout(() => {
-    saveStack(stack);
-    autoSaveTimer = null;
-  }, AUTOSAVE_DEBOUNCE_MS);
+  defaultAutoSaver.save(stack);
 }
 
 // ---------- export / import ----------
@@ -167,6 +201,18 @@ export function importStack(json: string): WildCardStack {
   }
   if (!Array.isArray(obj.cards)) {
     throw new Error("Invalid stack: 'cards' must be an array");
+  }
+
+  // Validate each card has at minimum an object with a string id
+  for (let i = 0; i < (obj.cards as unknown[]).length; i++) {
+    const card = (obj.cards as unknown[])[i];
+    if (card == null || typeof card !== "object") {
+      throw new Error(`Invalid stack: card at index ${i} must be an object`);
+    }
+    const cardObj = card as Record<string, unknown>;
+    if (!cardObj.id || typeof cardObj.id !== "string") {
+      throw new Error(`Invalid stack: card at index ${i} missing string 'id'`);
+    }
   }
 
   return data as WildCardStack;

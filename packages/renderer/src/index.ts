@@ -26,7 +26,7 @@ export { RenderLoop } from "./render-loop";
 export type { RenderState } from "./render-loop";
 
 // Engine bridge
-export { EngineBridge, WildCardApp, createWildCardApp, parseEngineEvents, extractWaitSeconds } from "./bridge";
+export { EngineBridge, WildCardApp, createWildCardApp, parseEngineEvents, extractWaitSeconds, safeParseArray, parseEngineResponse } from "./bridge";
 export type { IWildCardEngine, EngineFactory, CreateAppOptions } from "./bridge";
 
 // Tools
