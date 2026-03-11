@@ -240,6 +240,24 @@ body {
   margin-bottom: 0.25rem;
 }
 
+.wc-learn ol {
+  padding-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.wc-code-block {
+  background: #1e1e1e;
+  color: #d4d4d4;
+  font-family: "SF Mono", "Fira Code", "Fira Mono", Menlo, Consolas, "DejaVu Sans Mono", monospace;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  padding: 1rem 1.25rem;
+  border-radius: 6px;
+  overflow-x: auto;
+  margin-bottom: 1rem;
+  white-space: pre;
+}
+
 /* Legal page */
 
 .wc-legal {
