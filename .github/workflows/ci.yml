@@ -70,7 +70,7 @@ jobs:
         with:
           name: wasm-pkg
           path: packages/engine/pkg/
-      - run: pnpm -r build
+      - run: pnpm --filter '!@wildcard/engine' -r build
 
   test-ts:
     name: Test TypeScript Packages
@@ -83,8 +83,8 @@ jobs:
         with:
           name: wasm-pkg
           path: packages/engine/pkg/
-      - run: pnpm -r build
-      - run: pnpm -r test
+      - run: pnpm --filter '!@wildcard/engine' -r build
+      - run: pnpm --filter '!@wildcard/engine' -r test
 
   security-audit:
     name: Security Audit
