@@ -28,10 +28,10 @@ When working on this project, use the following agent team for parallel developm
                     TEAM LEAD
          (coordinates, reviews, integrates)
                        |
-     ┌─────────┬───────┼────────┬──────────┬──────────┬──────────┐
-     |         |       |        |          |          |          |
-  ENGINE   RENDERER  BACKEND  FRONTEND  CI/PERF  SECURITY  REVIEWER
-  AGENT    AGENT     AGENT    AGENT     AGENT    AGENT     AGENT
+     ┌─────────┬──────────┬───────┬──────────┬────────┬──────────┬──────────┬──────────┐
+     |         |          |       |          |        |          |          |          |
+  ENGINE   RENDERER  BACKEND  FRONTEND  CI/PERF  SEO/MKTG  SECURITY  REVIEWER
+  AGENT    AGENT     AGENT    AGENT     AGENT    AGENT     AGENT     AGENT
 ```
 
 ### Team Lead (you, the main Claude session)
@@ -66,6 +66,30 @@ When working on this project, use the following agent team for parallel developm
 ### CI/Perf Agent
 - **Owns:** `.github/`, deployment scripts
 - **Scope:** GitHub Actions, Lighthouse audits, WASM bundle size, deployment
+
+### SEO/Marketing Agent
+- **Owns:** `/learn` pages, meta tags, social cards, sitemap, keyword strategy
+- **Scope:** Discoverability, content strategy, and growth. Has access to Playwright (browser automation) and web search for competitive research.
+- **Tools:** Playwright MCP (browser testing, screenshot comparisons, social card previews), WebSearch/WebFetch (SERP analysis, competitor research)
+- **Responsibilities:**
+  1. **Keyword research** — identify high-value terms: "hypercard online", "hypercard alternative", "retro mac app builder", "visual programming tool", "hypertalk", etc. Use web search to analyze current SERP landscape.
+  2. **Content strategy** — plan `/learn` articles targeting long-tail keywords. Each article should be educational AND drive organic traffic.
+  3. **On-page SEO** — meta titles, descriptions, OG tags, JSON-LD structured data for every page. Verify with Playwright screenshots.
+  4. **Social cards** — generate and verify OG images for stack permalinks. Use Playwright to screenshot and validate rendering on Twitter/Discord/Slack.
+  5. **Sitemap & robots.txt** — auto-generated, submitted to Google Search Console.
+  6. **Competitor analysis** — monitor Decker, ViperCard, LiveCode positioning. Find gaps we can own.
+  7. **Gallery SEO** — each published stack is a crawlable page with unique meta tags, preview image, and structured data.
+  8. **Performance as SEO** — coordinate with CI/Perf Agent on Core Web Vitals (LCP, CLS, FID). Google ranks on these.
+  9. **Launch strategy** — plan Hacker News, Reddit (r/retro, r/programming, r/hypercard), Product Hunt, retro computing forums.
+  10. **Analytics** — recommend privacy-respecting analytics (Plausible/Umami on Hetzner, not Google Analytics).
+- **How to dispatch:**
+  ```
+  Agent: SEO/Marketing Agent — [task]
+    subagent_type: general-purpose
+    prompt: "You are the SEO/Marketing Agent for WildCard.
+            You have access to Playwright (browser automation) and
+            WebSearch/WebFetch for SERP analysis. [task details]..."
+  ```
 
 ### Security Agent
 - **Owns:** Cross-cutting — audits everything
