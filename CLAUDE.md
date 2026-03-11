@@ -302,8 +302,12 @@ This catches formatting/lint issues locally before they fail in CI.
 
 Remaining pre-launch tasks:
 
+- [x] GitHub branch protection rules — ruleset created with all 7 CI checks required
+- [x] Deploy CI workflow (version bump + SSH deploy + health check)
+- [x] Security hardening (auth disabled in prod, admin token required, CORS fail-closed)
+- [x] GitHub secrets configured (HETZNER_HOST, HETZNER_USER, HETZNER_SSH_KEY, APP_URL)
+- [x] SSH deploy key added to VPS
 - [ ] Lighthouse audit (target 90+) — run after deploying to Hetzner
-- [ ] GitHub branch protection rules
 - [ ] DNS setup (wildcard.you → Hetzner VPS IP)
 - [ ] First deploy via `deploy/setup.sh` + `deploy/deploy.sh`
 - [ ] Re-enable Dependabot for security patches

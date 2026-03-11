@@ -1,4 +1,5 @@
 import { Hono } from "hono";
+import { SITE_URL } from "../config.js";
 
 // ---------------------------------------------------------------------------
 // robots.txt — crawler directives.
@@ -7,7 +8,7 @@ import { Hono } from "hono";
 const ROBOTS_TXT = `User-agent: *
 Allow: /
 
-Sitemap: https://wildcard.you/sitemap.xml
+Sitemap: ${SITE_URL}/sitemap.xml
 `;
 
 const robotsRoutes = new Hono();

@@ -6,7 +6,7 @@ on:
 
 concurrency:
   group: deploy
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   deploy:
@@ -27,8 +27,16 @@ jobs:
         env:
           APP_URL: ${{ secrets.APP_URL }}
         run: |
-          sleep 5
-          curl -sf "$APP_URL/api/health" || exit 1
+          for i in $(seq 1 10); do
+            if curl -sf "$APP_URL/api/health" > /dev/null 2>&1; then
+              echo "Health check passed on attempt $i"
+              exit 0
+            fi
+            echo "Attempt $i failed, retrying in 3s..."
+            sleep 3
+          done
+          echo "Health check failed after 10 attempts"
+          exit 1
 
       - name: Notify on failure
         if: failure()

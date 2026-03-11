@@ -1,6 +1,7 @@
 import { Hono } from "hono";
 import { gallery } from "./gallery.js";
 import { getThumbnailUrl } from "../thumbnail.js";
+import { SITE_URL } from "../config.js";
 
 // ---------------------------------------------------------------------------
 // SSR routes — server-rendered HTML for stack permalinks.
@@ -9,8 +10,6 @@ import { getThumbnailUrl } from "../thumbnail.js";
 // previews on Twitter, Discord, Slack, etc. display meaningful content.
 // The page also bootstraps the Preact SPA for interactive use.
 // ---------------------------------------------------------------------------
-
-const DOMAIN = "https://wildcard.you";
 
 const ssrRoutes = new Hono();
 
@@ -31,7 +30,7 @@ function buildSsrPage(entry: {
   slug: string;
   stackId: string;
 }): string {
-  const url = `${DOMAIN}/s/${entry.slug}`;
+  const url = `${SITE_URL}/s/${entry.slug}`;
   const imageUrl = getThumbnailUrl(entry.stackId);
   const title = escapeHtml(entry.title);
   const description = escapeHtml(entry.description || "A stack built with WildCard");
