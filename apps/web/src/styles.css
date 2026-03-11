@@ -113,21 +113,33 @@ body {
   color: var(--wc-text);
 }
 
-/* Editor page — full-bleed canvas */
+/* Editor page — full-screen immersive canvas */
+
+/*
+ * When the editor is active, hide header/footer and go full-screen.
+ * The classic Mac desktop pattern (2x2 dithered gray) fills the viewport
+ * behind the canvas, recreating the authentic HyperCard experience.
+ */
 
 .wc-editor {
   flex: 1;
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #e0e0e0;
-  padding: 1rem;
+  width: 100%;
+  overflow: hidden;
+  /* Classic Mac desktop pattern: 2x2 dithered black/white checkerboard */
+  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAIAAAD91JpzAAAAE0lEQVR4nGNgYGD4//8/GDMwAAAp5AX71ZPZmwAAAABJRU5ErkJggg==");
+  background-repeat: repeat;
+  background-size: 2px 2px;
+  image-rendering: pixelated;
+  padding: 0;
 }
 
 .wc-editor canvas {
   image-rendering: pixelated;
   image-rendering: crisp-edges;
-  border: 1px solid #999;
   background: #fff;
 }
 

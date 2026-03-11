@@ -75,4 +75,11 @@ export { KeyboardHandler } from "./input/keyboard";
 export { ResponsiveLayout } from "./layout/responsive";
 
 // Storage
-export { saveStack, loadStack, autoSave, createAutoSaver } from "./storage/local";
+export {
+  saveStack,
+  loadStack,
+  autoSave,
+  createAutoSaver,
+  importStack,
+  exportStack,
+} from "./storage/local";
