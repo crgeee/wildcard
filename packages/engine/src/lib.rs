@@ -1,3 +1,6 @@
+pub mod token;
+pub mod lexer;
+
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
