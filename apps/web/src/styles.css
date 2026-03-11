@@ -121,33 +121,16 @@ body {
  * behind the canvas, recreating the authentic HyperCard experience.
  */
 
-/* Hide header and footer when editor is present */
-.wc-main:has(.wc-editor) ~ .wc-footer,
-.wc-layout:has(.wc-editor) > .wc-header,
-.wc-layout:has(.wc-editor) > .wc-footer {
-  display: none !important;
-}
-
-.wc-layout:has(.wc-editor) {
-  height: 100vh;
-  overflow: hidden;
-}
-
-.wc-layout:has(.wc-editor) > .wc-main {
-  height: 100vh;
-}
-
 .wc-editor {
   flex: 1;
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
   overflow: hidden;
-  /* Classic Mac desktop pattern: 2x2 dithered black/white pixels */
-  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEElEQVQIW2P4z8DwHwMDAA4GBP4Bxg+tAAAAAElFTkSuQmCC");
+  /* Classic Mac desktop pattern: 2x2 dithered black/white checkerboard */
+  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAIAAAD91JpzAAAAE0lEQVR4nGNgYGD4//8/GDMwAAAp5AX71ZPZmwAAAABJRU5ErkJggg==");
   background-repeat: repeat;
   background-size: 2px 2px;
   image-rendering: pixelated;

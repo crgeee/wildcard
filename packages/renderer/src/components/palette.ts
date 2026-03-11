@@ -64,11 +64,17 @@ export class ToolPalette {
     this._theme = theme;
   }
 
+  /** Select a tool and fire onToolSelect callback (used by UI clicks). */
   selectTool(tool: ToolName): void {
     this._selectedTool = tool;
     if (this.onToolSelect) {
       this.onToolSelect(tool);
     }
+  }
+
+  /** Set the selected tool visually without firing the callback (used programmatically). */
+  setSelectedTool(tool: ToolName): void {
+    this._selectedTool = tool;
   }
 
   setPosition(x: number, y: number): void {
