@@ -25,6 +25,10 @@ export { MessageBox } from "./components/message-box";
 export { RenderLoop } from "./render-loop";
 export type { RenderState } from "./render-loop";
 
+// Engine bridge
+export { EngineBridge, WildCardApp, createWildCardApp, parseEngineEvents, extractWaitSeconds } from "./bridge";
+export type { IWildCardEngine, EngineFactory, CreateAppOptions } from "./bridge";
+
 // Tools
 export type { Tool, ToolEvent, ToolName } from "./tools/tool";
 export { BrowseTool } from "./tools/browse";
