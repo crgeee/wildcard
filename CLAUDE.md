@@ -28,10 +28,10 @@ When working on this project, use the following agent team for parallel developm
                     TEAM LEAD
          (coordinates, reviews, integrates)
                        |
-     ┌─────────┬───────┼────────┬──────────┬──────────┐
-     |         |       |        |          |          |
-  ENGINE   RENDERER  BACKEND  FRONTEND  CI/PERF  REVIEWER
-  AGENT    AGENT     AGENT    AGENT     AGENT    AGENT
+     ┌─────────┬───────┼────────┬──────────┬──────────┬──────────┐
+     |         |       |        |          |          |          |
+  ENGINE   RENDERER  BACKEND  FRONTEND  CI/PERF  SECURITY  REVIEWER
+  AGENT    AGENT     AGENT    AGENT     AGENT    AGENT     AGENT
 ```
 
 ### Team Lead (you, the main Claude session)
@@ -66,6 +66,29 @@ When working on this project, use the following agent team for parallel developm
 ### CI/Perf Agent
 - **Owns:** `.github/`, deployment scripts
 - **Scope:** GitHub Actions, Lighthouse audits, WASM bundle size, deployment
+
+### Security Agent
+- **Owns:** Cross-cutting — audits everything
+- **Scope:** Security gatekeeper. Runs before any deployment and periodically during development.
+- **Checks:**
+  1. **Dependency audit** — `cargo audit` + `npm audit`, flag known CVEs
+  2. **WASM sandboxing** — ensure engine can't escape sandbox, no unsafe memory access
+  3. **Input sanitization** — all user input (WildTalk scripts, stack JSON, gallery submissions) validated and sanitized
+  4. **XSS prevention** — Canvas rendering is inherently safe, but check any DOM injection (message box, script editor, gallery pages)
+  5. **CSP headers** — strict Content-Security-Policy on all served pages
+  6. **Auth security** — bcrypt cost factor, JWT expiry, CSRF protection, rate limiting
+  7. **Content moderation** — verify AI scan can't be bypassed, review DMCA flow
+  8. **S3/storage** — no public write access, signed URLs for uploads, file type validation
+  9. **Secrets** — no hardcoded keys, env vars only, `.env` in `.gitignore`
+  10. **Supply chain** — lock files committed, verify dependency integrity
+- **Output:** Security report with CRITICAL (blocks deploy), HIGH (blocks merge), MEDIUM (track as issue).
+- **How to dispatch:**
+  ```
+  Agent: Security Agent — audit [scope]
+    subagent_type: pr-review-toolkit:silent-failure-hunter (for error handling)
+    — or —
+    subagent_type: general-purpose (for full security audit)
+  ```
 
 ### Reviewer Agent
 - **Owns:** Nothing — reviews everything
