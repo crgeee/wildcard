@@ -608,7 +608,7 @@ mod tests {
     #[test]
     fn test_put_into_variable() {
         let mut rt = Runtime::new_test();
-        rt.execute_script("on test\n  put 42 into x\nend test")
+        rt.load_script("on test\n  put 42 into x\nend test")
             .unwrap();
         rt.send_message("test");
         assert_eq!(rt.get_variable("x"), Some(Value::Number(42.0)));
@@ -617,7 +617,7 @@ mod tests {
     #[test]
     fn test_put_string_into_variable() {
         let mut rt = Runtime::new_test();
-        rt.execute_script("on test\n  put \"hello\" into msg\nend test")
+        rt.load_script("on test\n  put \"hello\" into msg\nend test")
             .unwrap();
         rt.send_message("test");
         assert_eq!(rt.get_variable("msg"), Some(Value::Text("hello".into())));
@@ -626,7 +626,7 @@ mod tests {
     #[test]
     fn test_if_true() {
         let mut rt = Runtime::new_test();
-        rt.execute_script(
+        rt.load_script(
             "on test\n  put 1 into x\n  if x = 1 then\n    put \"yes\" into result\n  end if\nend test",
         )
         .unwrap();
@@ -640,7 +640,7 @@ mod tests {
     #[test]
     fn test_if_false() {
         let mut rt = Runtime::new_test();
-        rt.execute_script(
+        rt.load_script(
             "on test\n  put 1 into x\n  if x = 2 then\n    put \"yes\" into result\n  else\n    put \"no\" into result\n  end if\nend test",
         )
         .unwrap();
@@ -654,7 +654,7 @@ mod tests {
     #[test]
     fn test_repeat_loop() {
         let mut rt = Runtime::new_test();
-        rt.execute_script(
+        rt.load_script(
             "on test\n  put 0 into sum\n  repeat with i = 1 to 5\n    put sum + i into sum\n  end repeat\nend test",
         )
         .unwrap();
@@ -665,7 +665,7 @@ mod tests {
     #[test]
     fn test_string_concat() {
         let mut rt = Runtime::new_test();
-        rt.execute_script(
+        rt.load_script(
             "on test\n  put \"Hello\" & \" World\" into msg\nend test",
         )
         .unwrap();
@@ -679,7 +679,7 @@ mod tests {
     #[test]
     fn test_string_concat_with_space() {
         let mut rt = Runtime::new_test();
-        rt.execute_script(
+        rt.load_script(
             "on test\n  put \"Hello\" && \"World\" into msg\nend test",
         )
         .unwrap();
@@ -693,7 +693,7 @@ mod tests {
     #[test]
     fn test_go_emits_event() {
         let mut rt = Runtime::new_test();
-        rt.execute_script("on test\n  go to next card\nend test")
+        rt.load_script("on test\n  go to next card\nend test")
             .unwrap();
         rt.send_message("test");
         assert!(rt
@@ -705,7 +705,7 @@ mod tests {
     #[test]
     fn test_go_prev() {
         let mut rt = Runtime::new_test();
-        rt.execute_script("on test\n  go to prev card\nend test")
+        rt.load_script("on test\n  go to prev card\nend test")
             .unwrap();
         rt.send_message("test");
         let event = &rt.events()[0];
@@ -718,7 +718,7 @@ mod tests {
     #[test]
     fn test_answer_emits_event() {
         let mut rt = Runtime::new_test();
-        rt.execute_script("on test\n  answer \"Hello!\"\nend test")
+        rt.load_script("on test\n  answer \"Hello!\"\nend test")
             .unwrap();
         rt.send_message("test");
         assert!(rt
@@ -730,7 +730,7 @@ mod tests {
     #[test]
     fn test_ask_emits_event() {
         let mut rt = Runtime::new_test();
-        rt.execute_script("on test\n  ask \"Name?\"\nend test")
+        rt.load_script("on test\n  ask \"Name?\"\nend test")
             .unwrap();
         rt.send_message("test");
         assert!(rt
@@ -742,7 +742,7 @@ mod tests {
     #[test]
     fn test_set_property_emits_event() {
         let mut rt = Runtime::new_test();
-        rt.execute_script(
+        rt.load_script(
             "on test\n  set the color of button \"submit\" to \"red\"\nend test",
         )
         .unwrap();
@@ -755,7 +755,7 @@ mod tests {
     #[test]
     fn test_show_emits_event() {
         let mut rt = Runtime::new_test();
-        rt.execute_script("on test\n  show button \"Go\"\nend test")
+        rt.load_script("on test\n  show button \"Go\"\nend test")
             .unwrap();
         rt.send_message("test");
         assert!(rt
@@ -767,7 +767,7 @@ mod tests {
     #[test]
     fn test_hide_emits_event() {
         let mut rt = Runtime::new_test();
-        rt.execute_script("on test\n  hide button \"Secret\"\nend test")
+        rt.load_script("on test\n  hide button \"Secret\"\nend test")
             .unwrap();
         rt.send_message("test");
         assert!(rt
@@ -779,7 +779,7 @@ mod tests {
     #[test]
     fn test_play_sound_emits_event() {
         let mut rt = Runtime::new_test();
-        rt.execute_script("on test\n  play sound \"click.wav\"\nend test")
+        rt.load_script("on test\n  play sound \"click.wav\"\nend test")
             .unwrap();
         rt.send_message("test");
         assert!(rt.events().iter().any(
@@ -790,7 +790,7 @@ mod tests {
     #[test]
     fn test_wait_emits_event() {
         let mut rt = Runtime::new_test();
-        rt.execute_script("on test\n  wait 2 seconds\nend test")
+        rt.load_script("on test\n  wait 2 seconds\nend test")
             .unwrap();
         rt.send_message("test");
         assert!(rt
@@ -802,7 +802,7 @@ mod tests {
     #[test]
     fn test_arithmetic() {
         let mut rt = Runtime::new_test();
-        rt.execute_script("on test\n  put 10 + 5 * 2 into x\nend test")
+        rt.load_script("on test\n  put 10 + 5 * 2 into x\nend test")
             .unwrap();
         rt.send_message("test");
         assert_eq!(rt.get_variable("x"), Some(Value::Number(20.0)));
@@ -811,7 +811,7 @@ mod tests {
     #[test]
     fn test_arithmetic_subtraction() {
         let mut rt = Runtime::new_test();
-        rt.execute_script("on test\n  put 10 - 3 into x\nend test")
+        rt.load_script("on test\n  put 10 - 3 into x\nend test")
             .unwrap();
         rt.send_message("test");
         assert_eq!(rt.get_variable("x"), Some(Value::Number(7.0)));
@@ -820,7 +820,7 @@ mod tests {
     #[test]
     fn test_arithmetic_division() {
         let mut rt = Runtime::new_test();
-        rt.execute_script("on test\n  put 10 / 2 into x\nend test")
+        rt.load_script("on test\n  put 10 / 2 into x\nend test")
             .unwrap();
         rt.send_message("test");
         assert_eq!(rt.get_variable("x"), Some(Value::Number(5.0)));
@@ -829,7 +829,7 @@ mod tests {
     #[test]
     fn test_comparison_greater() {
         let mut rt = Runtime::new_test();
-        rt.execute_script(
+        rt.load_script(
             "on test\n  if 5 > 3 then\n    put \"yes\" into x\n  end if\nend test",
         )
         .unwrap();
@@ -840,7 +840,7 @@ mod tests {
     #[test]
     fn test_comparison_less() {
         let mut rt = Runtime::new_test();
-        rt.execute_script(
+        rt.load_script(
             "on test\n  if 2 < 5 then\n    put \"yes\" into x\n  end if\nend test",
         )
         .unwrap();
@@ -851,7 +851,7 @@ mod tests {
     #[test]
     fn test_boolean_and() {
         let mut rt = Runtime::new_test();
-        rt.execute_script(
+        rt.load_script(
             "on test\n  if true and true then\n    put \"yes\" into x\n  end if\nend test",
         )
         .unwrap();
@@ -862,7 +862,7 @@ mod tests {
     #[test]
     fn test_boolean_or() {
         let mut rt = Runtime::new_test();
-        rt.execute_script(
+        rt.load_script(
             "on test\n  if false or true then\n    put \"yes\" into x\n  end if\nend test",
         )
         .unwrap();
@@ -873,7 +873,7 @@ mod tests {
     #[test]
     fn test_boolean_not() {
         let mut rt = Runtime::new_test();
-        rt.execute_script(
+        rt.load_script(
             "on test\n  if not false then\n    put \"yes\" into x\n  end if\nend test",
         )
         .unwrap();
@@ -884,7 +884,7 @@ mod tests {
     #[test]
     fn test_put_into_field() {
         let mut rt = Runtime::new_test();
-        rt.execute_script(
+        rt.load_script(
             "on test\n  put \"Hello\" into field \"greeting\"\nend test",
         )
         .unwrap();
@@ -899,7 +899,7 @@ mod tests {
     fn test_read_from_field() {
         let mut rt = Runtime::new_test();
         rt.fields.insert("name".to_string(), "Alice".to_string());
-        rt.execute_script(
+        rt.load_script(
             "on test\n  put field \"name\" into x\nend test",
         )
         .unwrap();
@@ -910,7 +910,7 @@ mod tests {
     #[test]
     fn test_global_variables() {
         let mut rt = Runtime::new_test();
-        rt.execute_script(
+        rt.load_script(
             "on setup\n  global gScore\n  put 100 into gScore\nend setup\n\non check\n  global gScore\n  put gScore into x\nend check",
         )
         .unwrap();
@@ -922,7 +922,7 @@ mod tests {
     #[test]
     fn test_function_length() {
         let mut rt = Runtime::new_test();
-        rt.execute_script(
+        rt.load_script(
             "on test\n  put length(\"hello\") into n\nend test",
         )
         .unwrap();
@@ -933,7 +933,7 @@ mod tests {
     #[test]
     fn test_function_abs() {
         let mut rt = Runtime::new_test();
-        rt.execute_script("on test\n  put abs(-5) into n\nend test")
+        rt.load_script("on test\n  put abs(-5) into n\nend test")
             .unwrap();
         rt.send_message("test");
         assert_eq!(rt.get_variable("n"), Some(Value::Number(5.0)));
@@ -944,7 +944,7 @@ mod tests {
         let mut rt = Runtime::new_test();
         rt.fields
             .insert("data".to_string(), "hello world foo".to_string());
-        rt.execute_script(
+        rt.load_script(
             "on test\n  put word 2 of field \"data\" into x\nend test",
         )
         .unwrap();
@@ -957,7 +957,7 @@ mod tests {
         let mut rt = Runtime::new_test();
         rt.fields
             .insert("data".to_string(), "hello world foo".to_string());
-        rt.execute_script(
+        rt.load_script(
             "on test\n  put the first word of field \"data\" into x\nend test",
         )
         .unwrap();
@@ -970,7 +970,7 @@ mod tests {
         let mut rt = Runtime::new_test();
         rt.fields
             .insert("data".to_string(), "hello world foo".to_string());
-        rt.execute_script(
+        rt.load_script(
             "on test\n  put the last word of field \"data\" into x\nend test",
         )
         .unwrap();
@@ -981,7 +981,7 @@ mod tests {
     #[test]
     fn test_multiple_events() {
         let mut rt = Runtime::new_test();
-        rt.execute_script(
+        rt.load_script(
             "on test\n  go to next card\n  answer \"Done\"\n  play sound \"beep\"\nend test",
         )
         .unwrap();
@@ -992,7 +992,7 @@ mod tests {
     #[test]
     fn test_nested_repeat() {
         let mut rt = Runtime::new_test();
-        rt.execute_script(
+        rt.load_script(
             "on test\n  put 0 into total\n  repeat with i = 1 to 3\n    repeat with j = 1 to 2\n      put total + 1 into total\n    end repeat\n  end repeat\nend test",
         )
         .unwrap();
@@ -1003,7 +1003,7 @@ mod tests {
     #[test]
     fn test_string_comparison_case_insensitive() {
         let mut rt = Runtime::new_test();
-        rt.execute_script(
+        rt.load_script(
             "on test\n  if \"Hello\" = \"hello\" then\n    put \"yes\" into x\n  end if\nend test",
         )
         .unwrap();
@@ -1014,7 +1014,7 @@ mod tests {
     #[test]
     fn test_fetch_emits_event() {
         let mut rt = Runtime::new_test();
-        rt.execute_script(
+        rt.load_script(
             "on test\n  fetch \"https://api.example.com\" into result\nend test",
         )
         .unwrap();
@@ -1034,7 +1034,7 @@ mod tests {
     #[test]
     fn test_drain_events() {
         let mut rt = Runtime::new_test();
-        rt.execute_script("on test\n  go to next card\nend test")
+        rt.load_script("on test\n  go to next card\nend test")
             .unwrap();
         rt.send_message("test");
         assert_eq!(rt.events().len(), 1);
@@ -1046,7 +1046,7 @@ mod tests {
     #[test]
     fn test_value_coercion_text_to_number() {
         let mut rt = Runtime::new_test();
-        rt.execute_script(
+        rt.load_script(
             "on test\n  put \"10\" into x\n  put x + 5 into y\nend test",
         )
         .unwrap();
@@ -1057,7 +1057,7 @@ mod tests {
     #[test]
     fn test_handler_with_params() {
         let mut rt = Runtime::new_test();
-        rt.execute_script(
+        rt.load_script(
             "on doAdd a, b\n  put a + b into result\nend doAdd",
         )
         .unwrap();

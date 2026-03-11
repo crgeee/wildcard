@@ -333,15 +333,7 @@ fn keyword_from_str(word: &str) -> TokenKind {
         "empty" => TokenKind::Empty,
         "space" => TokenKind::Space,
         "tab" => TokenKind::Tab,
-        "newline" | "linefeed" | "return" => {
-            // "return" is already handled above as Return keyword
-            // This handles newline/linefeed as constant keywords
-            if word.to_lowercase() == "return" {
-                TokenKind::Return
-            } else {
-                TokenKind::Newline
-            }
-        }
+        "newline" | "linefeed" => TokenKind::Newline,
         "quote" => TokenKind::Quote,
         "number" => TokenKind::Number,
         "delete" => TokenKind::Delete,
@@ -611,6 +603,6 @@ mod tests {
         let tokens = lex("on mouseUp\ngo to next card\nend mouseUp").unwrap();
         assert_eq!(tokens[0].line, 1); // on
         assert_eq!(tokens[3].line, 2); // go
-        assert_eq!(tokens[7].line, 3); // end
+        assert_eq!(tokens[8].line, 3); // end (index 8 because newline tokens are included)
     }
 }

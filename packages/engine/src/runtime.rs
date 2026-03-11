@@ -113,11 +113,11 @@ pub enum EngineOutput {
 pub struct Runtime {
     pub variables: HashMap<String, Value>,
     pub globals: HashMap<String, Value>,
-    handlers: HashMap<String, Handler>,
-    events: Vec<EngineOutput>,
+    pub(crate) handlers: HashMap<String, Handler>,
+    pub(crate) events: Vec<EngineOutput>,
     pub fields: HashMap<String, String>,
     /// Declared globals in current handler scope
-    current_globals: Vec<String>,
+    pub(crate) current_globals: Vec<String>,
 }
 
 impl Runtime {
