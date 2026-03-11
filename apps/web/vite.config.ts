@@ -1,4 +1,5 @@
 import { defineConfig } from "vite";
+import { resolve } from "path";
 
 export default defineConfig({
   esbuild: {
@@ -10,13 +11,11 @@ export default defineConfig({
     alias: {
       react: "preact/compat",
       "react-dom": "preact/compat",
+      "@wildcard/engine": resolve(__dirname, "../../packages/engine/pkg"),
     },
   },
   build: {
     outDir: "dist",
     emptyOutDir: true,
-    rollupOptions: {
-      external: ["@wildcard/engine"],
-    },
   },
 });
