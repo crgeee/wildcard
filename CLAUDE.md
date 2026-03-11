@@ -63,9 +63,16 @@ When working on this project, use the following agent team for parallel developm
 - **Scope:** Preact SPA, routing, editor/player/gallery pages, SEO, legal pages
 - **Tests:** `pnpm test` from `apps/web/`
 
-### CI/Perf Agent
-- **Owns:** `.github/`, deployment scripts
-- **Scope:** GitHub Actions, Lighthouse audits, WASM bundle size, deployment
+### CI/Perf & Cost Agent
+- **Owns:** `.github/`, deployment scripts, infrastructure
+- **Scope:** GitHub Actions, Lighthouse audits, WASM bundle size, deployment, cost monitoring
+- **Cost responsibilities:**
+  - Hetzner VPS sizing recommendations (start small, scale when needed)
+  - Object Storage usage tracking and cost projections
+  - Bandwidth monitoring and CDN caching strategy
+  - Database size management (stack cleanup policies, soft deletes)
+  - Monthly cost estimates and alerts when thresholds approach
+  - Recommend cost-effective alternatives as traffic grows
 
 ### SEO/Marketing Agent
 - **Owns:** `/learn` pages, meta tags, social cards, sitemap, keyword strategy
@@ -91,10 +98,10 @@ When working on this project, use the following agent team for parallel developm
             WebSearch/WebFetch for SERP analysis. [task details]..."
   ```
 
-### Security Agent
-- **Owns:** Cross-cutting — audits everything
-- **Scope:** Security gatekeeper. Runs before any deployment and periodically during development.
-- **Checks:**
+### Security & Legal Agent
+- **Owns:** Cross-cutting — audits everything for security and legal compliance
+- **Scope:** Security + legal gatekeeper. Runs before any deployment and periodically during development.
+- **Security checks:**
   1. **Dependency audit** — `cargo audit` + `npm audit`, flag known CVEs
   2. **WASM sandboxing** — ensure engine can't escape sandbox, no unsafe memory access
   3. **Input sanitization** — all user input (WildTalk scripts, stack JSON, gallery submissions) validated and sanitized
@@ -105,6 +112,15 @@ When working on this project, use the following agent team for parallel developm
   8. **S3/storage** — no public write access, signed URLs for uploads, file type validation
   9. **Secrets** — no hardcoded keys, env vars only, `.env` in `.gitignore`
   10. **Supply chain** — lock files committed, verify dependency integrity
+- **Legal checks:**
+  11. **Trademark compliance** — verify no use of "HyperCard"/"HyperTalk" as product names. Only nominative fair use.
+  12. **Disclaimer presence** — app footer, /legal page, README, gallery ToS all contain required disclaimers
+  13. **License compliance** — all dependencies MIT/Apache compatible. No GPL contamination in the core library.
+  14. **DMCA process** — gallery has working takedown flow, documented in ToS
+  15. **Privacy policy** — GDPR-ready: what data we collect, how we store it, user deletion rights
+  16. **Cookie consent** — if any cookies beyond session, consent banner required
+  17. **ToS for gallery** — content ownership, prohibited content, user responsibilities
+  18. **Open-source license** — MIT license applied correctly, contributor agreement clear
 - **Output:** Security report with CRITICAL (blocks deploy), HIGH (blocks merge), MEDIUM (track as issue).
 - **How to dispatch:**
   ```
