@@ -14,11 +14,37 @@ export function LearnPage() {
 
       {/* Section 1 */}
       <h2>What Was HyperCard?</h2>
+
+      <figure class="wc-figure">
+        <img
+          src="/images/learn/hypercard-home-card.png"
+          alt="HyperCard Home Card showing the main navigation screen with icons for Intro, Help, Address, Documents, and more — the classic 1-bit black-and-white interface"
+          width="512"
+        />
+        <figcaption>
+          The HyperCard Home Card — the starting point for every HyperCard user. Each icon
+          represents a different stack.
+        </figcaption>
+      </figure>
+
       <p>
         HyperCard was created by Bill Atkinson in 1987 for the Macintosh. It let anyone build
         interactive software — teachers, artists, kids, and businesses alike could create without
         needing to be professional programmers.
       </p>
+
+      <figure class="wc-figure wc-figure--small">
+        <img
+          src="/images/learn/bill-atkinson-hypercard.jpg"
+          alt="Bill Atkinson announcing HyperCard at MacWorld, August 11, 1987"
+          width="400"
+        />
+        <figcaption>
+          Bill Atkinson announces HyperCard at MacWorld, August 11, 1987. Photo via Internet
+          Archive.
+        </figcaption>
+      </figure>
+
       <p>
         Users built "stacks" of "cards" containing buttons, text fields, and graphics. Its scripting
         language, HyperTalk, was designed to read like natural English, making programming
@@ -29,13 +55,50 @@ export function LearnPage() {
         directly on each card. Apple distributed it free with every Macintosh, and millions of
         people used it to build everything from educational software to business tools to games.
       </p>
+
+      <figure class="wc-figure">
+        <img
+          src="/images/learn/hypercard-simulator.png"
+          alt="HyperCard Simulator showing the classic window chrome with title bar, close box, and stack icons — a faithful web recreation of the original interface"
+          width="512"
+        />
+        <figcaption>
+          A modern HyperCard simulator showing the classic window chrome, 1-bit graphics, and stack
+          navigation. Screenshot from{" "}
+          <a href="https://hcsimulator.com/" target="_blank" rel="noopener noreferrer">
+            hcsimulator.com
+          </a>
+          .
+        </figcaption>
+      </figure>
+
       <p>
         Often called "the web before the web," HyperCard pioneered hyperlinks, multimedia, and
         interactivity years before the World Wide Web existed.
       </p>
 
       {/* Section 2 */}
-      <h2>HyperCard Timeline</h2>
+      <h2>HyperCard Through the Years</h2>
+
+      <figure class="wc-figure wc-figure--gallery">
+        <div class="wc-figure-row">
+          <img
+            src="/images/learn/hypercard-22-interface.jpg"
+            alt="HyperCard 2.2 retail box — 'The powerful tool for creating custom software solutions' with Apple rainbow logo"
+            width="300"
+          />
+          <img
+            src="/images/learn/hypercard-23-scripting.jpg"
+            alt="HyperCard 2.3 retail box showing script windows and card layouts — 'Accelerated for Power Macintosh'"
+            width="300"
+          />
+        </div>
+        <figcaption>
+          HyperCard retail boxes: version 2.2 (left) and 2.3 (right). Note the HyperTalk scripts
+          visible on the 2.3 box — scripting was a first-class feature.
+        </figcaption>
+      </figure>
+
       <ul>
         <li>
           <strong>1987:</strong> Bill Atkinson creates HyperCard; Apple ships it free with every Mac
@@ -44,7 +107,7 @@ export function LearnPage() {
           <strong>1988:</strong> Myst prototyped in HyperCard by Cyan Worlds
         </li>
         <li>
-          <strong>1989:</strong> HyperCard 2.0 — color support begins, scripting improvements
+          <strong>1989:</strong> HyperCard 2.0 — scripting improvements and external commands
         </li>
         <li>
           <strong>1990:</strong> Apple starts charging for HyperCard (controversial)
@@ -65,6 +128,26 @@ export function LearnPage() {
           <strong>2026:</strong> WildCard brings the spirit back to the web
         </li>
       </ul>
+
+      <figure class="wc-figure">
+        <img
+          src="/images/learn/hypercard-stacks.png"
+          alt="A collection of HyperCard stacks preserved on the Internet Archive, showing dozens of user-created stacks with custom icons and names"
+          width="600"
+        />
+        <figcaption>
+          Just a fraction of the thousands of HyperCard stacks created by users worldwide, preserved
+          by the{" "}
+          <a
+            href="https://archive.org/details/hypercardstacks"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Internet Archive
+          </a>
+          .
+        </figcaption>
+      </figure>
 
       {/* Section 3 */}
       <h2>WildTalk Basics</h2>
@@ -152,25 +235,59 @@ end repeat`}</code>
         </li>
       </ol>
 
+      <figure class="wc-figure">
+        <img
+          src="/images/learn/hypercard-menu-bar.gif"
+          alt="The HyperCard menu bar showing File, Edit, Go, Tools, and Objects menus"
+          style={{ imageRendering: "pixelated" }}
+        />
+        <figcaption>
+          The HyperCard menu bar: File, Edit, Go, Tools, Objects — WildCard recreates this exactly.
+          Screenshot from{" "}
+          <a
+            href="https://folkstream.com/muse/teachhc/menu/menu.html"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Folkstream
+          </a>
+          .
+        </figcaption>
+      </figure>
+
       {/* Section 5 */}
-      <h2>External Resources</h2>
+      <h2>Try the Original</h2>
+      <p>
+        Want to experience the real thing? These resources let you run actual HyperCard software:
+      </p>
       <ul>
         <li>
           <a href="https://infinitemac.org/" target="_blank" rel="noopener noreferrer">
             Infinite Mac
           </a>{" "}
-          — Run real HyperCard in your browser and experience the original firsthand
+          — Run real Mac OS 8 with HyperCard 2.4 right in your browser. No install needed.
+        </li>
+        <li>
+          <a href="https://hcsimulator.com/" target="_blank" rel="noopener noreferrer">
+            HyperCard Simulator
+          </a>{" "}
+          — Import and run classic HyperCard stacks in a web-based simulator.
         </li>
         <li>
           <a
-            href="https://archive.org/details/hypercardstackoftheart"
+            href="https://archive.org/details/hypercardstacks"
             target="_blank"
             rel="noopener noreferrer"
           >
-            The HyperCard Stack of the Art
+            Internet Archive: HyperCard Stacks
           </a>{" "}
-          — A curated collection of notable HyperCard stacks on the Internet Archive
+          — Thousands of preserved HyperCard stacks you can browse and play.
         </li>
+      </ul>
+
+      {/* Section 6 */}
+      <h2>Learn More</h2>
+      <ul>
         <li>
           <a href="https://hypercard.org/" target="_blank" rel="noopener noreferrer">
             hypercard.org
@@ -187,12 +304,29 @@ end repeat`}</code>
           </a>{" "}
           — Comprehensive history and technical overview
         </li>
+        <li>
+          <a
+            href="https://archive.org/details/CC501_hypercard"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Computer Chronicles: HyperCard (1987)
+          </a>{" "}
+          — Bill Atkinson demonstrates HyperCard live on television
+        </li>
+        <li>
+          <a href="https://folkstream.com/muse/teachhc/" target="_blank" rel="noopener noreferrer">
+            Folkstream: Teach HyperCard
+          </a>{" "}
+          — Full tutorial with UI screenshots of every menu and tool
+        </li>
       </ul>
-      <p>
-        <em>
-          Note: WildCard is NOT affiliated with Apple. "HyperCard" and "HyperTalk" are trademarks of
-          Apple Inc. We use them here for historical reference only.
-        </em>
+
+      <p class="wc-legal-note">
+        WildCard is NOT affiliated with Apple. "HyperCard" and "HyperTalk" are trademarks of Apple
+        Inc. Images on this page are used for historical and educational purposes under fair use.
+        Photo credits: Internet Archive, Higher Intellect Vintage Wiki, HyperCard Simulator,
+        Folkstream.
       </p>
     </div>
   );

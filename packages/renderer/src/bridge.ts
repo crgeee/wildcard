@@ -20,6 +20,8 @@ import { createStack } from "@wildcard/types";
 import type { RenderLoop } from "./render-loop";
 import type { MessageBox } from "./components/message-box";
 import type { Theme } from "./theme";
+import { classicTheme } from "./themes/classic";
+import { v3Theme } from "./themes/v3";
 
 // ---------------------------------------------------------------------------
 // Engine interface — mirrors the WASM-exported WildCardEngine class.
@@ -530,10 +532,16 @@ export class WildCardApp {
     }
   }
 
-  /** Toggle between classic and v3 themes. */
-  switchTheme(): void {
-    // Requires both themes to be available — the caller must supply them.
-    // This is a placeholder; the actual theme toggle is done by the web app.
+  /** Get the current theme. */
+  get theme(): Theme | null {
+    return this._theme;
+  }
+
+  /** Toggle between classic and v3 themes. Returns the newly active theme. */
+  switchTheme(): Theme {
+    const next = this._theme?.name === "classic" ? v3Theme : classicTheme;
+    this.setTheme(next);
+    return next;
   }
 
   /**
