@@ -2,6 +2,8 @@ pub mod token;
 pub mod lexer;
 pub mod ast;
 pub mod parser;
+pub mod runtime;
+pub mod interpreter;
 
 use wasm_bindgen::prelude::*;
 
