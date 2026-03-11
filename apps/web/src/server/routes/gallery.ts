@@ -1,11 +1,13 @@
 import { Hono } from "hono";
 import { errorJson, parseJsonBody } from "../lib/responses.js";
+import { moderateStack } from "../moderation/index.js";
+import { enqueue } from "./moderation.js";
 
 // ---------------------------------------------------------------------------
 // In-memory store — will be replaced by PostgreSQL in a later phase.
 // ---------------------------------------------------------------------------
 
-interface GalleryEntry {
+export interface GalleryEntry {
   id: string;
   stackId: string;
   slug: string;
@@ -16,7 +18,7 @@ interface GalleryEntry {
   publishedAt: string;
 }
 
-const gallery = new Map<string, GalleryEntry>();
+export const gallery = new Map<string, GalleryEntry>();
 
 let idCounter = 0;
 function nextId(): string {
@@ -86,6 +88,31 @@ galleryRoutes.post("/publish", async (c) => {
     return c.json(errorJson(409, "A gallery entry with this slug already exists"), 409);
   }
 
+  // --- Content moderation --------------------------------------------------
+  const modResult = await moderateStack(b);
+  const hasHigh = modResult.flags.some((f) => f.severity === "high");
+  const hasMedium = modResult.flags.some((f) => f.severity === "medium");
+
+  if (hasHigh) {
+    return c.json(
+      { error: "Content rejected by moderation", status: 400, flags: modResult.flags },
+      400,
+    );
+  }
+
+  if (hasMedium) {
+    const queued = enqueue({
+      stackId: b.stackId as string,
+      title: b.title as string,
+      flags: modResult.flags,
+    });
+    return c.json(
+      { message: "Submitted for moderation review", queueId: queued.id, flags: modResult.flags },
+      202,
+    );
+  }
+
+  // --- Publish immediately -------------------------------------------------
   const entry: GalleryEntry = {
     id: nextId(),
     stackId: b.stackId,

@@ -4,6 +4,12 @@ import { securityHeaders } from "./middleware/security.js";
 import stackRoutes from "./routes/stacks.js";
 import galleryRoutes from "./routes/gallery.js";
 import authRoutes from "./routes/auth.js";
+import moderationRoutes from "./routes/moderation.js";
+import exportRoutes from "./routes/export.js";
+import ssrRoutes from "./routes/ssr.js";
+import sitemapRoutes from "./routes/sitemap.js";
+import robotsRoutes from "./routes/robots.js";
+import thumbnailRoutes from "./thumbnail.js";
 
 // ---------------------------------------------------------------------------
 // Hono application
@@ -33,6 +39,15 @@ app.use("*", securityHeaders);
 app.route("/api/stacks", stackRoutes);
 app.route("/api/gallery", galleryRoutes);
 app.route("/api/auth", authRoutes);
+app.route("/api/moderation", moderationRoutes);
+app.route("/api/export", exportRoutes);
+
+// --- SEO & SSR routes ------------------------------------------------------
+
+app.route("/s", ssrRoutes);
+app.route("/sitemap.xml", sitemapRoutes);
+app.route("/robots.txt", robotsRoutes);
+app.route("/api/thumbnails", thumbnailRoutes);
 
 // --- Health check ----------------------------------------------------------
 
