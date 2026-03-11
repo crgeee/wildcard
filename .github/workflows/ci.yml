@@ -77,7 +77,9 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - uses: ./.github/actions/setup
-      - run: pnpm audit --audit-level=high || true
+      - name: npm audit
+        run: pnpm audit --audit-level=high
+        continue-on-error: true
       - uses: dtolnay/rust-toolchain@stable
       - run: cargo install cargo-audit
       - run: cd packages/engine && cargo audit

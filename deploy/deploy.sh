@@ -2,6 +2,8 @@
 # ==============================================================================
 # WildCard — Deployment script (run on the server to deploy updates)
 #
+# Runs as user `chris` (or any non-root user). Uses sudo only for nginx.
+#
 # Usage:
 #   cd /var/www/wildcard && ./deploy/deploy.sh
 # ==============================================================================
@@ -10,7 +12,7 @@ set -euo pipefail
 
 APP_DIR="/var/www/wildcard"
 LOCKFILE="/tmp/wildcard-deploy.lock"
-DEPLOY_LOG="/var/log/wildcard-deploy.log"
+DEPLOY_LOG="$APP_DIR/deploy.log"
 
 # --- Logging ------------------------------------------------------------------
 log() { echo "[$(date '+%Y-%m-%d %H:%M:%S')] $*" | tee -a "$DEPLOY_LOG"; }
@@ -20,7 +22,8 @@ if [ -f "$LOCKFILE" ]; then
   log "ERROR: Deploy already in progress (lockfile exists: $LOCKFILE)"
   exit 1
 fi
-trap 'rm -f "$LOCKFILE"' EXIT
+cleanup() { rm -f "$LOCKFILE"; }
+trap cleanup EXIT
 touch "$LOCKFILE"
 
 # --- Rollback on failure ------------------------------------------------------
@@ -29,13 +32,15 @@ rollback() {
   log "ERROR: Deploy failed! Rolling back..."
   if [ -n "$PREV_COMMIT" ]; then
     cd "$APP_DIR"
-    git checkout "$PREV_COMMIT" -- .
+    git reset --hard "$PREV_COMMIT"
+    pnpm install --frozen-lockfile 2>/dev/null || true
+    pnpm -r build 2>/dev/null || true
     log "Rolled back to $PREV_COMMIT"
   fi
   pm2 reload deploy/ecosystem.config.cjs 2>/dev/null || true
   log "Rollback complete. Check logs: pm2 logs wildcard"
 }
-trap 'rollback; rm -f "$LOCKFILE"' ERR
+trap rollback ERR
 
 cd "$APP_DIR"
 PREV_COMMIT=$(git rev-parse HEAD)
@@ -77,11 +82,11 @@ log "==> Restarting pm2..."
 pm2 stop wildcard 2>/dev/null || true
 pm2 start deploy/ecosystem.config.cjs
 
-# --- Sync nginx config --------------------------------------------------------
+# --- Sync nginx config (requires sudo) ----------------------------------------
 if ! diff -q deploy/nginx.conf /etc/nginx/sites-available/wildcard > /dev/null 2>&1; then
   log "==> Nginx config changed, updating..."
-  cp deploy/nginx.conf /etc/nginx/sites-available/wildcard
-  nginx -t && systemctl reload nginx
+  sudo cp deploy/nginx.conf /etc/nginx/sites-available/wildcard
+  sudo nginx -t && sudo systemctl reload nginx
   log "==> Nginx reloaded"
 fi
 

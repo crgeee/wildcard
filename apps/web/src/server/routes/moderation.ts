@@ -1,3 +1,4 @@
+import { timingSafeEqual } from "node:crypto";
 import { Hono } from "hono";
 import { errorJson, parseJsonBody } from "../lib/responses.js";
 
@@ -72,7 +73,10 @@ function isAdmin(authHeader: string | undefined): boolean {
   // In dev/test, accept any token starting with "admin-" for convenience.
   const adminToken = process.env.ADMIN_TOKEN;
   if (adminToken) {
-    return token === adminToken;
+    const tokenBuf = Buffer.from(token);
+    const adminBuf = Buffer.from(adminToken);
+    if (tokenBuf.length !== adminBuf.length) return false;
+    return timingSafeEqual(tokenBuf, adminBuf);
   }
   if (process.env.NODE_ENV === "production") {
     return false; // No ADMIN_TOKEN set in production = no admin access

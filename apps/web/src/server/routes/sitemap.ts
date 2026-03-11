@@ -1,11 +1,10 @@
 import { Hono } from "hono";
 import { gallery } from "./gallery.js";
+import { SITE_URL } from "../config.js";
 
 // ---------------------------------------------------------------------------
 // Sitemap — auto-generated XML sitemap for search engines.
 // ---------------------------------------------------------------------------
-
-const DOMAIN = "https://wildcard.you";
 
 const sitemapRoutes = new Hono();
 
@@ -25,7 +24,7 @@ function buildSitemap(): string {
   // Static pages
   for (const page of STATIC_PAGES) {
     urls.push(`  <url>
-    <loc>${DOMAIN}${page.path}</loc>
+    <loc>${SITE_URL}${page.path}</loc>
     <lastmod>${today}</lastmod>
     <changefreq>${page.changefreq}</changefreq>
     <priority>${page.priority}</priority>
@@ -36,7 +35,7 @@ function buildSitemap(): string {
   for (const entry of gallery.values()) {
     const lastmod = entry.publishedAt.split("T")[0];
     urls.push(`  <url>
-    <loc>${DOMAIN}/s/${entry.slug}</loc>
+    <loc>${SITE_URL}/s/${entry.slug}</loc>
     <lastmod>${lastmod}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>

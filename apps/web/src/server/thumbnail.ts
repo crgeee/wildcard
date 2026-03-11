@@ -1,4 +1,5 @@
 import { Hono } from "hono";
+import { SITE_URL } from "./config.js";
 
 // ---------------------------------------------------------------------------
 // Thumbnail URL generation & stub endpoint
@@ -7,11 +8,9 @@ import { Hono } from "hono";
 // rendering will replace this in a later phase.
 // ---------------------------------------------------------------------------
 
-const DOMAIN = "https://wildcard.you";
-
 /** Return the public URL for a stack thumbnail. */
 export function getThumbnailUrl(stackId: string): string {
-  return `${DOMAIN}/api/thumbnails/${stackId}.png`;
+  return `${SITE_URL}/api/thumbnails/${stackId}.png`;
 }
 
 // 1x1 transparent PNG (68 bytes)
