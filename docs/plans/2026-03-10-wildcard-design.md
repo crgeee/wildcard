@@ -447,7 +447,7 @@ All jobs run on PR and push to `main`. WASM build cached for speed.
 
 ## 14. Domain
 
-**Primary:** `wildcard.you` — "WildCard. You build it." Puts the creator first, just like HyperCard did.
+**Primary:** `wildcard.you` — PURCHASED. "WildCard. You build it." Puts the creator first, just like HyperCard did.
 
 ---
 
