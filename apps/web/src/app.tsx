@@ -11,7 +11,7 @@ export function App() {
     <Layout>
       <Router>
         <Route path="/" component={EditorPage} />
-        <Route path="/play/:id" component={PlayerPage} />
+        <Route path="/play/:id?" component={PlayerPage} />
         <Route path="/gallery" component={GalleryPage} />
         <Route path="/learn" component={LearnPage} />
         <Route path="/legal" component={LegalPage} />

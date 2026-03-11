@@ -20,6 +20,7 @@ import {
   drawScriptEditor,
   defaultPaintConfig,
   createAutoSaver,
+  importStack,
 } from "@wildcard/renderer";
 import type { WildCardApp, ToolName } from "@wildcard/renderer";
 import { createButton, createField, createCard } from "@wildcard/types";
@@ -108,6 +109,18 @@ export function EditorPage() {
     let appRef: WildCardApp | null = null;
     const autoSaver = createAutoSaver(500);
 
+    /** Update the browser tab title with stack name and card position. */
+    function updateDocumentTitle() {
+      if (appRef?.stack) {
+        const name = appRef.stack.name || "Untitled";
+        const cardNum = appRef.currentCardIndex + 1;
+        const total = appRef.stack.cards.length;
+        document.title = `${name} \u2014 Card ${cardNum} of ${total}`;
+      } else {
+        document.title = "WildCard";
+      }
+    }
+
     function scheduleAutoSave() {
       if (appRef?.stack) {
         autoSaver.save(appRef.stack);
@@ -117,6 +130,7 @@ export function EditorPage() {
         } catch {
           // localStorage full -- silently ignore
         }
+        updateDocumentTitle();
       }
     }
 
@@ -187,6 +201,7 @@ export function EditorPage() {
       const next = Math.min(appRef.currentCardIndex + 1, appRef.stack.cards.length - 1);
       appRef.goToCard(next);
       scheduleAutoSave();
+      updateDocumentTitle();
     }
 
     function goPrevCard() {
@@ -194,18 +209,21 @@ export function EditorPage() {
       const prev = Math.max(appRef.currentCardIndex - 1, 0);
       appRef.goToCard(prev);
       scheduleAutoSave();
+      updateDocumentTitle();
     }
 
     function goFirstCard() {
       if (!appRef) return;
       appRef.goToCard(0);
       scheduleAutoSave();
+      updateDocumentTitle();
     }
 
     function goLastCard() {
       if (!appRef?.stack) return;
       appRef.goToCard(appRef.stack.cards.length - 1);
       scheduleAutoSave();
+      updateDocumentTitle();
     }
 
     // ---------------------------------------------------------------
@@ -321,13 +339,46 @@ export function EditorPage() {
       }
     };
 
+    /** Open a file picker and load a .wildcard.json file. */
+    function openStackFromFile() {
+      const input = document.createElement("input");
+      input.type = "file";
+      input.accept = ".json,.wildcard.json";
+      input.onchange = () => {
+        const file = input.files?.[0];
+        if (!file || !appRef) return;
+        const reader = new FileReader();
+        reader.onload = () => {
+          const text = reader.result as string;
+          try {
+            // Validate the JSON before loading
+            importStack(text);
+            // Load into engine
+            const loaded = appRef!.loadStack(text);
+            if (loaded) {
+              scheduleAutoSave();
+              updateDocumentTitle();
+            }
+          } catch {
+            // Invalid file — ignore silently
+          }
+        };
+        reader.readAsText(file);
+      };
+      input.click();
+    }
+
     function handleFileMenu(item: string) {
       switch (item) {
         case "New Stack":
           if (appRef) {
             appRef.newStack("Untitled");
             scheduleAutoSave();
+            updateDocumentTitle();
           }
+          break;
+        case "Open Stack":
+          openStackFromFile();
           break;
         case "Save a Copy":
           if (appRef?.stack) {
@@ -354,6 +405,7 @@ export function EditorPage() {
             appRef.stack.cards.push(newCard);
             appRef.goToCard(appRef.stack.cards.length - 1);
             scheduleAutoSave();
+            updateDocumentTitle();
           }
           break;
         case "Delete Card":
@@ -363,6 +415,7 @@ export function EditorPage() {
             const newIdx = Math.min(idx, appRef.stack.cards.length - 1);
             appRef.goToCard(newIdx);
             scheduleAutoSave();
+            updateDocumentTitle();
           }
           break;
       }
@@ -568,7 +621,13 @@ export function EditorPage() {
       if (appRef) {
         appRef.newStack("Untitled");
         scheduleAutoSave();
+        updateDocumentTitle();
       }
+    });
+
+    // Cmd+O: open stack
+    keyboardHandler.registerShortcut("o", ["Meta"], () => {
+      openStackFromFile();
     });
 
     // Generic key handler for message box, script editor, and card navigation
@@ -677,6 +736,7 @@ export function EditorPage() {
           app.newStack("Untitled");
         }
 
+        updateDocumentTitle();
         renderLoop.start();
         extraRafId = requestAnimationFrame(extraRenderTick);
       })
