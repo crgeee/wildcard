@@ -102,13 +102,7 @@ export class RoundRectTool implements Tool {
   }
 
   /** Draw a quarter circle using midpoint circle algorithm */
-  private _drawCorner(
-    cx: number,
-    cy: number,
-    r: number,
-    sx: number,
-    sy: number,
-  ): void {
+  private _drawCorner(cx: number, cy: number, r: number, sx: number, sy: number): void {
     if (!this._canvas) return;
     let x = 0;
     let y = r;

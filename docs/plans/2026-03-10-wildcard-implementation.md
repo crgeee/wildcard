@@ -40,11 +40,12 @@ Agents work in **phases**. Within a phase, independent tasks run in parallel. Th
 
 ## Phase 0: Project Scaffolding & CI
 
-*All agents blocked until this completes. Team Lead executes.*
+_All agents blocked until this completes. Team Lead executes._
 
 ### Task 0.1: Monorepo Scaffolding
 
 **Files:**
+
 - Create: `package.json` (root workspace)
 - Create: `pnpm-workspace.yaml`
 - Create: `tsconfig.base.json`
@@ -237,6 +238,7 @@ git commit -m "chore: scaffold monorepo with all four packages"
 ### Task 0.2: CI Pipeline (GitHub Actions)
 
 **Files:**
+
 - Create: `.github/workflows/ci.yml`
 - Create: `.github/dependabot.yml`
 - Create: `.prettierrc`
@@ -414,6 +416,7 @@ git commit -m "ci: add GitHub Actions pipeline, Dependabot, and Prettier config"
 ### Task 0.3: Legal Files & README
 
 **Files:**
+
 - Create: `LICENSE`
 - Create: `README.md`
 - Create: `.gitignore`
@@ -446,10 +449,10 @@ SOFTWARE.
 
 **Step 2: Write README with disclaimers**
 
-```markdown
+````markdown
 # WildCard
 
-*The HyperCard 3.0 that Apple never shipped.*
+_The HyperCard 3.0 that Apple never shipped._
 
 WildCard is an open-source, web-based reimagining of HyperCard — the legendary
 hypermedia tool created by Bill Atkinson in 1987. Build interactive stories, games,
@@ -466,12 +469,12 @@ an English-like scripting language.
 
 ## Packages
 
-| Package | Description |
-|---------|-------------|
-| `@wildcard/engine` | Rust/WASM — WildTalk interpreter and stack runtime |
-| `@wildcard/renderer` | TypeScript — Canvas 2D retro Mac rendering engine |
-| `@wildcard/types` | TypeScript — shared types and FFI bridge |
-| `wildcard-web` | TypeScript — web app (editor, player, gallery) |
+| Package              | Description                                        |
+| -------------------- | -------------------------------------------------- |
+| `@wildcard/engine`   | Rust/WASM — WildTalk interpreter and stack runtime |
+| `@wildcard/renderer` | TypeScript — Canvas 2D retro Mac rendering engine  |
+| `@wildcard/types`    | TypeScript — shared types and FFI bridge           |
+| `wildcard-web`       | TypeScript — web app (editor, player, gallery)     |
 
 ## Getting Started
 
@@ -480,6 +483,7 @@ pnpm install
 cd packages/engine && cargo build
 pnpm dev
 ```
+````
 
 ## Disclaimer
 
@@ -494,37 +498,41 @@ educational purposes only, constituting nominative fair use.
 ## License
 
 [MIT](LICENSE)
+
 ```
 
 **Step 3: Write .gitignore**
 
 ```
-node_modules/
+
+node*modules/
 dist/
 target/
 pkg/
 *.wasm
 .env
-.env.*
+.env.\_
 .DS_Store
-```
+
+````
 
 **Step 4: Commit**
 
 ```bash
 git add -A
 git commit -m "docs: add README with disclaimers, MIT license, and .gitignore"
-```
+````
 
 ---
 
 ## Phase 1: @wildcard/types — Shared Foundation
 
-*Engine Agent executes. No dependencies on other agents.*
+_Engine Agent executes. No dependencies on other agents._
 
 ### Task 1.1: Stack File Format Types
 
 **Files:**
+
 - Create: `packages/types/src/stack.ts`
 - Create: `packages/types/src/card.ts`
 - Create: `packages/types/src/objects.ts`
@@ -553,7 +561,7 @@ describe("Stack format", () => {
   });
 
   it("creates a button with script", () => {
-    const btn = createButton({ name: "Go", script: 'on mouseUp\n  go to next card\nend mouseUp' });
+    const btn = createButton({ name: "Go", script: "on mouseUp\n  go to next card\nend mouseUp" });
     expect(btn.type).toBe("button");
     expect(btn.name).toBe("Go");
     expect(btn.script).toContain("mouseUp");
@@ -641,7 +649,13 @@ export interface Rect {
   height: number;
 }
 
-export type ButtonStyle = "rectangle" | "roundRect" | "checkbox" | "radioButton" | "transparent" | "shadow";
+export type ButtonStyle =
+  | "rectangle"
+  | "roundRect"
+  | "checkbox"
+  | "radioButton"
+  | "transparent"
+  | "shadow";
 export type FieldStyle = "rectangle" | "scrolling" | "transparent" | "shadow";
 ```
 
@@ -762,6 +776,7 @@ git commit -m "feat(types): add stack file format types and factory functions"
 ### Task 1.2: Engine Event Types (FFI Bridge Contract)
 
 **Files:**
+
 - Create: `packages/types/src/events.ts`
 - Test: `packages/types/src/__tests__/events.test.ts`
 
@@ -825,7 +840,10 @@ Expected: FAIL — EngineEvent type not found
 ```typescript
 // packages/types/src/events.ts
 export type EngineEvent =
-  | { type: "GoToCard"; payload: { cardId: string; direction?: "next" | "prev" | "first" | "last" | "direct" } }
+  | {
+      type: "GoToCard";
+      payload: { cardId: string; direction?: "next" | "prev" | "first" | "last" | "direct" };
+    }
   | { type: "SetField"; payload: { fieldId: string; content: string } }
   | { type: "PlaySound"; payload: { sound: string } }
   | { type: "ShowMessage"; payload: { message: string; style: "answer" | "ask" } }
@@ -864,11 +882,12 @@ git commit -m "feat(types): add engine event types for WASM-JS bridge"
 
 ## Phase 2: @wildcard/engine — WildTalk Interpreter (Rust)
 
-*Engine Agent executes. Depends on Phase 1 (event types define the FFI contract).*
+_Engine Agent executes. Depends on Phase 1 (event types define the FFI contract)._
 
 ### Task 2.1: WildTalk Lexer
 
 **Files:**
+
 - Create: `packages/engine/src/lexer.rs`
 - Create: `packages/engine/src/token.rs`
 - Modify: `packages/engine/src/lib.rs`
@@ -1153,6 +1172,7 @@ mod tests {
 ```
 
 Update `packages/engine/src/lib.rs`:
+
 ```rust
 mod token;
 mod lexer;
@@ -1182,6 +1202,7 @@ git commit -m "feat(engine): add WildTalk lexer with keywords, literals, and ope
 ### Task 2.2: WildTalk Parser (AST)
 
 **Files:**
+
 - Create: `packages/engine/src/ast.rs`
 - Create: `packages/engine/src/parser.rs`
 
@@ -1379,6 +1400,7 @@ pub enum ChunkType {
 **Step 4: Write the parser** (recursive descent)
 
 The parser is substantial (~300-400 lines). The agent should implement a recursive descent parser that:
+
 - Parses `on <name> ... end <name>` handler blocks
 - Parses statements: `put`, `go`, `if/then/else/end if`, `repeat/end repeat`, `set`, `show`, `hide`, `answer`, `ask`, `play sound`, `wait`, `pass`, `return`, `global`, `fetch`
 - Parses expressions: literals, variables, field/button refs, binary ops, chunking expressions
@@ -1386,6 +1408,7 @@ The parser is substantial (~300-400 lines). The agent should implement a recursi
 - Returns `Result<Script, String>` with useful error messages including line numbers
 
 Key parsing functions:
+
 ```rust
 pub fn parse(tokens: Vec<Token>) -> Result<Script, String> { ... }
 fn parse_handler(tokens: &[Token], pos: &mut usize) -> Result<Handler, String> { ... }
@@ -1415,6 +1438,7 @@ git commit -m "feat(engine): add WildTalk parser with AST for handlers, statemen
 ### Task 2.3: Tree-Walk Interpreter
 
 **Files:**
+
 - Create: `packages/engine/src/interpreter.rs`
 - Create: `packages/engine/src/runtime.rs`
 
@@ -1476,6 +1500,7 @@ Expected: FAIL
 **Step 3: Write the runtime and interpreter**
 
 The runtime holds:
+
 - `variables: HashMap<String, Value>` — local and global variables
 - `handlers: HashMap<String, Handler>` — compiled handlers
 - `events: Vec<EngineOutput>` — emitted events (collected, then serialized to JSON for FFI)
@@ -1513,6 +1538,7 @@ pub struct Runtime {
 ```
 
 The interpreter implements:
+
 - `execute_handler(handler, args)` — runs a handler's body
 - `execute_statement(stmt)` — dispatches each statement type
 - `evaluate_expression(expr)` — evaluates to `Value`
@@ -1541,6 +1567,7 @@ git commit -m "feat(engine): add tree-walk interpreter with variables, control f
 ### Task 2.4: WASM FFI Bridge
 
 **Files:**
+
 - Modify: `packages/engine/src/lib.rs`
 
 **Step 1: Write the failing test**
@@ -1667,11 +1694,12 @@ git commit -m "feat(engine): add WASM FFI bridge exposing WildCardEngine to Java
 
 ## Phase 3: @wildcard/renderer — Retro Mac Canvas
 
-*Renderer Agent executes. Can start once types (Phase 1) are done. Does not depend on engine.*
+_Renderer Agent executes. Can start once types (Phase 1) are done. Does not depend on engine._
 
 ### Task 3.1: Canvas Setup & Theme System
 
 **Files:**
+
 - Create: `packages/renderer/src/canvas.ts`
 - Create: `packages/renderer/src/theme.ts`
 - Create: `packages/renderer/src/themes/classic.ts`
@@ -1726,12 +1754,14 @@ git commit -m "feat(renderer): add theme system with Classic and 3.0 skins"
 ### Task 3.2: Window Chrome & Menu Bar
 
 **Files:**
+
 - Create: `packages/renderer/src/components/menubar.ts`
 - Create: `packages/renderer/src/components/window.ts`
 - Create: `packages/renderer/src/components/titlebar.ts`
 - Test: `packages/renderer/src/__tests__/menubar.test.ts`
 
 Implements:
+
 - Menu bar rendering (File, Edit, Go, Tools, Objects)
 - Dropdown menu rendering with keyboard navigation
 - Classic Mac window chrome (title bar with horizontal lines, close box, resize)
@@ -1741,6 +1771,7 @@ Implements:
 **Step 1-5: TDD cycle as above.**
 
 **Commit:**
+
 ```bash
 git commit -m "feat(renderer): add menu bar and window chrome with Classic/3.0 rendering"
 ```
@@ -1750,12 +1781,14 @@ git commit -m "feat(renderer): add menu bar and window chrome with Classic/3.0 r
 ### Task 3.3: Card Canvas & Object Rendering
 
 **Files:**
+
 - Create: `packages/renderer/src/components/card.ts`
 - Create: `packages/renderer/src/components/button.ts`
 - Create: `packages/renderer/src/components/field.ts`
 - Create: `packages/renderer/src/render-loop.ts`
 
 Implements:
+
 - Card canvas at 512x342 (classic) with nearest-neighbor scaling
 - Button rendering (all 6 styles) in both themes
 - Field rendering (all 4 styles) with text wrapping and scrolling
@@ -1763,6 +1796,7 @@ Implements:
 - `requestAnimationFrame` render loop with layer caching
 
 **Commit:**
+
 ```bash
 git commit -m "feat(renderer): add card canvas with button and field rendering"
 ```
@@ -1772,6 +1806,7 @@ git commit -m "feat(renderer): add card canvas with button and field rendering"
 ### Task 3.4: Tool Palette & Paint Tools
 
 **Files:**
+
 - Create: `packages/renderer/src/components/palette.ts`
 - Create: `packages/renderer/src/tools/browse.ts`
 - Create: `packages/renderer/src/tools/pencil.ts`
@@ -1786,6 +1821,7 @@ git commit -m "feat(renderer): add card canvas with button and field rendering"
 - Create: `packages/renderer/src/tools/tool.ts` (interface)
 
 Implements:
+
 - Floating tool palette with all classic tools
 - `Tool` interface that extensions can implement
 - Each tool handles mouseDown/mouseMove/mouseUp on the card canvas
@@ -1793,6 +1829,7 @@ Implements:
 - Browse tool sends events to the engine (mouseUp on buttons)
 
 **Commit:**
+
 ```bash
 git commit -m "feat(renderer): add tool palette with paint tools and Tool interface"
 ```
@@ -1802,10 +1839,12 @@ git commit -m "feat(renderer): add tool palette with paint tools and Tool interf
 ### Task 3.5: Script Editor & Message Box
 
 **Files:**
+
 - Create: `packages/renderer/src/components/script-editor.ts`
 - Create: `packages/renderer/src/components/message-box.ts`
 
 Implements:
+
 - Script editor opens as a draggable window
 - Basic syntax highlighting for WildTalk (keywords, strings, comments)
 - Line numbers
@@ -1813,6 +1852,7 @@ Implements:
 - Both render in the active theme
 
 **Commit:**
+
 ```bash
 git commit -m "feat(renderer): add script editor with syntax highlighting and message box"
 ```
@@ -1822,12 +1862,14 @@ git commit -m "feat(renderer): add script editor with syntax highlighting and me
 ### Task 3.6: Touch & Responsive Support
 
 **Files:**
+
 - Create: `packages/renderer/src/input/touch.ts`
 - Create: `packages/renderer/src/input/mouse.ts`
 - Create: `packages/renderer/src/input/keyboard.ts`
 - Create: `packages/renderer/src/layout/responsive.ts`
 
 Implements:
+
 - Touch event → mouse event mapping
 - Pinch-to-zoom on canvas
 - Responsive canvas scaling (nearest-neighbor upscale)
@@ -1835,6 +1877,7 @@ Implements:
 - Keyboard shortcut system (desktop) and long-press context menus (touch)
 
 **Commit:**
+
 ```bash
 git commit -m "feat(renderer): add touch support, responsive layout, and input handling"
 ```
@@ -1843,15 +1886,17 @@ git commit -m "feat(renderer): add touch support, responsive layout, and input h
 
 ## Phase 4: Integration — Engine + Renderer
 
-*Team Lead coordinates. Both agents collaborate.*
+_Team Lead coordinates. Both agents collaborate._
 
 ### Task 4.1: Wire Engine WASM to Renderer
 
 **Files:**
+
 - Create: `packages/renderer/src/bridge.ts`
 - Modify: `packages/renderer/src/render-loop.ts`
 
 Implements:
+
 - Load WASM module async
 - Create `WildCardEngine` instance
 - Route input events (mouse, keyboard) → engine
@@ -1859,6 +1904,7 @@ Implements:
 - Handle `GoToCard` (switch displayed card), `SetField` (update field content), `ShowMessage` (dialog), etc.
 
 **Commit:**
+
 ```bash
 git commit -m "feat: wire WASM engine to Canvas renderer via event bridge"
 ```
@@ -1868,15 +1914,18 @@ git commit -m "feat: wire WASM engine to Canvas renderer via event bridge"
 ### Task 4.2: Stack Load/Save (localStorage)
 
 **Files:**
+
 - Create: `packages/renderer/src/storage/local.ts`
 
 Implements:
+
 - Save stack to localStorage as JSON
 - Load stack from localStorage
 - Auto-save on changes (debounced)
 - List saved stacks
 
 **Commit:**
+
 ```bash
 git commit -m "feat: add localStorage stack persistence with auto-save"
 ```
@@ -1885,11 +1934,12 @@ git commit -m "feat: add localStorage stack persistence with auto-save"
 
 ## Phase 5: Web App (wildcard-web)
 
-*Web App Agent executes. Depends on Phases 3-4 for the renderer being functional.*
+_Web App Agent executes. Depends on Phases 3-4 for the renderer being functional._
 
 ### Task 5.1: Vite + Preact SPA Shell
 
 **Files:**
+
 - Create: `apps/web/src/main.tsx`
 - Create: `apps/web/src/app.tsx`
 - Create: `apps/web/src/pages/editor.tsx`
@@ -1901,6 +1951,7 @@ git commit -m "feat: add localStorage stack persistence with auto-save"
 - Create: `apps/web/index.html`
 
 Implements:
+
 - Preact SPA with client-side routing
 - Editor page: mounts the renderer canvas, full authoring environment
 - Player page: loads a stack by ID, read-only browsing
@@ -1909,6 +1960,7 @@ Implements:
 - Legal page: disclaimers, trademark acknowledgments, license
 
 **Commit:**
+
 ```bash
 git commit -m "feat(web): add Vite + Preact SPA with routing and page shells"
 ```
@@ -1918,6 +1970,7 @@ git commit -m "feat(web): add Vite + Preact SPA with routing and page shells"
 ### Task 5.2: Hono API Server
 
 **Files:**
+
 - Create: `apps/web/src/server/index.ts`
 - Create: `apps/web/src/server/routes/stacks.ts`
 - Create: `apps/web/src/server/routes/auth.ts`
@@ -1926,6 +1979,7 @@ git commit -m "feat(web): add Vite + Preact SPA with routing and page shells"
 - Create: `apps/web/src/server/db/client.ts`
 
 Implements:
+
 - Hono server serving the Vite SPA + API routes
 - `POST /api/stacks` — save a stack (authenticated)
 - `GET /api/stacks/:id` — get a stack
@@ -1935,6 +1989,7 @@ Implements:
 - Auth: email/password with bcrypt + JWT, GitHub OAuth
 
 **Commit:**
+
 ```bash
 git commit -m "feat(web): add Hono API with stack CRUD, auth, and gallery endpoints"
 ```
@@ -1944,11 +1999,13 @@ git commit -m "feat(web): add Hono API with stack CRUD, auth, and gallery endpoi
 ### Task 5.3: Gallery with SSR Meta Tags
 
 **Files:**
+
 - Modify: `apps/web/src/server/routes/gallery.ts`
 - Create: `apps/web/src/server/routes/ssr.ts`
 - Create: `apps/web/src/server/thumbnail.ts`
 
 Implements:
+
 - Stack permalink pages with server-rendered OG meta tags
 - Thumbnail generation (render card 1 to canvas, export as PNG)
 - Open Graph image for social sharing
@@ -1956,6 +2013,7 @@ Implements:
 - Sitemap generation at `/sitemap.xml`
 
 **Commit:**
+
 ```bash
 git commit -m "feat(web): add SSR meta tags, thumbnails, OG cards, and sitemap for SEO"
 ```
@@ -1965,11 +2023,13 @@ git commit -m "feat(web): add SSR meta tags, thumbnails, OG cards, and sitemap f
 ### Task 5.4: Content Moderation
 
 **Files:**
+
 - Create: `apps/web/src/server/moderation/index.ts`
 - Create: `apps/web/src/server/moderation/text-scan.ts`
 - Create: `apps/web/src/server/moderation/image-scan.ts`
 
 Implements:
+
 - AI text scan on publish (check for hate speech, violence, etc.)
 - Image scan for NSFW/harmful content
 - Moderation queue for flagged content
@@ -1977,6 +2037,7 @@ Implements:
 - User reporting endpoint
 
 **Commit:**
+
 ```bash
 git commit -m "feat(web): add content moderation with AI scanning and review queue"
 ```
@@ -1986,15 +2047,18 @@ git commit -m "feat(web): add content moderation with AI scanning and review que
 ### Task 5.5: HTML Export
 
 **Files:**
+
 - Create: `apps/web/src/export/html.ts`
 
 Implements:
+
 - Bundle WASM engine + renderer + stack data into a single .html file
 - Self-contained — no external dependencies
 - Minified for reasonable file size
 - Works offline
 
 **Commit:**
+
 ```bash
 git commit -m "feat(web): add self-contained HTML export for stacks"
 ```
@@ -2003,11 +2067,12 @@ git commit -m "feat(web): add self-contained HTML export for stacks"
 
 ## Phase 6: Historical Context & Onboarding
 
-*Web App Agent or dedicated Content Agent.*
+_Web App Agent or dedicated Content Agent._
 
 ### Task 6.1: Onboarding Stack
 
 Create an interactive WildCard stack (JSON) that teaches:
+
 1. Card 1: "Welcome to WildCard" — what this is
 2. Card 2: "The Story of HyperCard" — Bill Atkinson, 1987
 3. Card 3: "What People Built" — Myst, wikis, the web
@@ -2019,6 +2084,7 @@ Create an interactive WildCard stack (JSON) that teaches:
 ### Task 6.2: Learn Pages
 
 Static content for `/learn`:
+
 - What was HyperCard?
 - WildTalk basics
 - Building your first stack
@@ -2027,6 +2093,7 @@ Static content for `/learn`:
 ### Task 6.3: Starter Templates
 
 Pre-built stacks:
+
 - Address Book (classic HyperCard demo)
 - Quiz Game
 - Choose Your Own Adventure
@@ -2037,9 +2104,13 @@ Pre-built stacks:
 ## Phase 7: Polish & Deploy
 
 ### Task 7.1: Service Worker & Offline Support
+
 ### Task 7.2: Performance Audit (Lighthouse 90+)
+
 ### Task 7.3: Hetzner VPS Deployment (pm2 + nginx)
+
 ### Task 7.4: Domain Setup & SSL
+
 ### Task 7.5: GitHub Repo — Public with Branch Protection
 
 ---

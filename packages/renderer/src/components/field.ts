@@ -141,7 +141,7 @@ export function drawField(
 ): void {
   if (!state.visible) return;
 
-  const { rect, style } = state;
+  const { style } = state;
 
   switch (style) {
     case "rectangle":
@@ -159,11 +159,7 @@ export function drawField(
   }
 }
 
-function drawRectField(
-  ctx: CanvasRenderingContext2D,
-  theme: Theme,
-  state: FieldRenderState,
-): void {
+function drawRectField(ctx: CanvasRenderingContext2D, theme: Theme, state: FieldRenderState): void {
   const { rect } = state;
 
   // Background
@@ -290,12 +286,7 @@ function drawFieldText(
   ctx.restore();
 }
 
-function drawUpArrow(
-  ctx: CanvasRenderingContext2D,
-  theme: Theme,
-  cx: number,
-  cy: number,
-): void {
+function drawUpArrow(ctx: CanvasRenderingContext2D, theme: Theme, cx: number, cy: number): void {
   ctx.fillStyle = theme.colors.scrollArrow;
   ctx.beginPath();
   ctx.moveTo(cx, cy - 3);
@@ -305,12 +296,7 @@ function drawUpArrow(
   ctx.fill();
 }
 
-function drawDownArrow(
-  ctx: CanvasRenderingContext2D,
-  theme: Theme,
-  cx: number,
-  cy: number,
-): void {
+function drawDownArrow(ctx: CanvasRenderingContext2D, theme: Theme, cx: number, cy: number): void {
   ctx.fillStyle = theme.colors.scrollArrow;
   ctx.beginPath();
   ctx.moveTo(cx, cy + 3);

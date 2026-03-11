@@ -68,14 +68,6 @@ fn peek(tokens: &[Token], pos: usize) -> &TokenKind {
     }
 }
 
-fn peek_text(tokens: &[Token], pos: usize) -> &str {
-    if pos < tokens.len() {
-        &tokens[pos].text
-    } else {
-        ""
-    }
-}
-
 fn current_line(tokens: &[Token], pos: usize) -> usize {
     if pos < tokens.len() {
         tokens[pos].line
@@ -85,10 +77,7 @@ fn current_line(tokens: &[Token], pos: usize) -> usize {
 }
 
 fn at_end_of_statement(tokens: &[Token], pos: usize) -> bool {
-    matches!(
-        peek(tokens, pos),
-        TokenKind::NewlineTok | TokenKind::Eof
-    )
+    matches!(peek(tokens, pos), TokenKind::NewlineTok | TokenKind::Eof)
 }
 
 fn parse_handler(tokens: &[Token], pos: &mut usize) -> Result<Handler, String> {
@@ -121,7 +110,10 @@ fn parse_handler(tokens: &[Token], pos: &mut usize) -> Result<Handler, String> {
         skip_newlines(tokens, pos);
 
         if *pos >= tokens.len() || tokens[*pos].kind == TokenKind::Eof {
-            return Err(format!("Unterminated handler '{}' — expected 'end {}'", name, name));
+            return Err(format!(
+                "Unterminated handler '{}' — expected 'end {}'",
+                name, name
+            ));
         }
 
         // Check for "end <name>"
@@ -176,14 +168,13 @@ fn parse_statement(tokens: &[Token], pos: &mut usize) -> Result<Statement, Strin
         }
     };
 
-    // Skip to end of line
-    while *pos < tokens.len()
+    // Skip to end of line (if there are remaining tokens on this line)
+    if *pos < tokens.len()
         && tokens[*pos].kind != TokenKind::NewlineTok
         && tokens[*pos].kind != TokenKind::Eof
     {
-        // If we're at a valid statement boundary already (e.g., after parsing
-        // block statements like if/repeat that consume past newlines), break
-        break;
+        // At a valid statement boundary already (e.g., after parsing
+        // block statements like if/repeat that consume past newlines)
     }
 
     result
@@ -195,13 +186,11 @@ fn parse_put(tokens: &[Token], pos: &mut usize) -> Result<Statement, String> {
     expect(tokens, pos, TokenKind::Put)?;
     let value = parse_expression(tokens, pos)?;
 
-    let target = if *pos < tokens.len() && tokens[*pos].kind == TokenKind::Into {
-        *pos += 1;
-        parse_expression(tokens, pos)?
-    } else if *pos < tokens.len() && tokens[*pos].kind == TokenKind::After {
-        *pos += 1;
-        parse_expression(tokens, pos)?
-    } else if *pos < tokens.len() && tokens[*pos].kind == TokenKind::Before {
+    let target = if *pos < tokens.len()
+        && matches!(
+            tokens[*pos].kind,
+            TokenKind::Into | TokenKind::After | TokenKind::Before
+        ) {
         *pos += 1;
         parse_expression(tokens, pos)?
     } else {
@@ -515,11 +504,11 @@ fn parse_send(tokens: &[Token], pos: &mut usize) -> Result<Statement, String> {
     expect(tokens, pos, TokenKind::Send)?;
 
     // "send <message> to <target>"
-    let msg_tok = if *pos < tokens.len() && tokens[*pos].kind == TokenKind::StringLiteral {
-        let t = tokens[*pos].text.clone();
-        *pos += 1;
-        t
-    } else if *pos < tokens.len() && tokens[*pos].kind == TokenKind::Identifier {
+    let msg_tok = if *pos < tokens.len()
+        && matches!(
+            tokens[*pos].kind,
+            TokenKind::StringLiteral | TokenKind::Identifier
+        ) {
         let t = tokens[*pos].text.clone();
         *pos += 1;
         t
@@ -787,10 +776,12 @@ fn parse_primary(tokens: &[Token], pos: &mut usize) -> Result<Expression, String
 
     match &tokens[*pos].kind {
         TokenKind::NumberLiteral => {
-            let val: f64 = tokens[*pos]
-                .text
-                .parse()
-                .map_err(|_| format!("Invalid number '{}' at line {}", tokens[*pos].text, tokens[*pos].line))?;
+            let val: f64 = tokens[*pos].text.parse().map_err(|_| {
+                format!(
+                    "Invalid number '{}' at line {}",
+                    tokens[*pos].text, tokens[*pos].line
+                )
+            })?;
             *pos += 1;
             Ok(Expression::NumberLiteral(val))
         }
@@ -1048,8 +1039,7 @@ mod tests {
 
     #[test]
     fn test_parse_put_into() {
-        let tokens =
-            lex("on mouseUp\n  put \"hello\" into field \"name\"\nend mouseUp").unwrap();
+        let tokens = lex("on mouseUp\n  put \"hello\" into field \"name\"\nend mouseUp").unwrap();
         let script = parse(tokens).unwrap();
         match &script.handlers[0].body[0] {
             Statement::Put { value, target } => {
@@ -1126,10 +1116,9 @@ mod tests {
 
     #[test]
     fn test_parse_if_then() {
-        let tokens = lex(
-            "on mouseUp\n  if x > 10 then\n    go to next card\n  end if\nend mouseUp",
-        )
-        .unwrap();
+        let tokens =
+            lex("on mouseUp\n  if x > 10 then\n    go to next card\n  end if\nend mouseUp")
+                .unwrap();
         let script = parse(tokens).unwrap();
         match &script.handlers[0].body[0] {
             Statement::If {
@@ -1152,9 +1141,7 @@ mod tests {
         .unwrap();
         let script = parse(tokens).unwrap();
         match &script.handlers[0].body[0] {
-            Statement::If {
-                else_body, ..
-            } => {
+            Statement::If { else_body, .. } => {
                 assert!(else_body.is_some());
                 assert_eq!(else_body.as_ref().unwrap().len(), 1);
             }
@@ -1164,15 +1151,12 @@ mod tests {
 
     #[test]
     fn test_parse_repeat() {
-        let tokens = lex(
-            "on mouseUp\n  repeat with i = 1 to 5\n    show i\n  end repeat\nend mouseUp",
-        )
-        .unwrap();
+        let tokens =
+            lex("on mouseUp\n  repeat with i = 1 to 5\n    show i\n  end repeat\nend mouseUp")
+                .unwrap();
         let script = parse(tokens).unwrap();
         match &script.handlers[0].body[0] {
-            Statement::Repeat {
-                var, body, ..
-            } => {
+            Statement::Repeat { var, body, .. } => {
                 assert_eq!(var, "i");
                 assert_eq!(body.len(), 1);
             }
@@ -1182,10 +1166,9 @@ mod tests {
 
     #[test]
     fn test_parse_repeat_while() {
-        let tokens = lex(
-            "on test\n  repeat while x > 0\n    put x - 1 into x\n  end repeat\nend test",
-        )
-        .unwrap();
+        let tokens =
+            lex("on test\n  repeat while x > 0\n    put x - 1 into x\n  end repeat\nend test")
+                .unwrap();
         let script = parse(tokens).unwrap();
         match &script.handlers[0].body[0] {
             Statement::RepeatWhile { body, .. } => {
@@ -1197,10 +1180,9 @@ mod tests {
 
     #[test]
     fn test_parse_set() {
-        let tokens = lex(
-            "on mouseUp\n  set the color of button \"submit\" to \"red\"\nend mouseUp",
-        )
-        .unwrap();
+        let tokens =
+            lex("on mouseUp\n  set the color of button \"submit\" to \"red\"\nend mouseUp")
+                .unwrap();
         let script = parse(tokens).unwrap();
         match &script.handlers[0].body[0] {
             Statement::Set { property, value } => {
@@ -1242,8 +1224,7 @@ mod tests {
 
     #[test]
     fn test_parse_play_sound() {
-        let tokens =
-            lex("on mouseUp\n  play sound \"click.wav\"\nend mouseUp").unwrap();
+        let tokens = lex("on mouseUp\n  play sound \"click.wav\"\nend mouseUp").unwrap();
         let script = parse(tokens).unwrap();
         match &script.handlers[0].body[0] {
             Statement::PlaySound { sound } => match sound {
@@ -1315,10 +1296,9 @@ mod tests {
 
     #[test]
     fn test_parse_fetch() {
-        let tokens = lex(
-            "on mouseUp\n  fetch \"https://api.example.com\" into result\nend mouseUp",
-        )
-        .unwrap();
+        let tokens =
+            lex("on mouseUp\n  fetch \"https://api.example.com\" into result\nend mouseUp")
+                .unwrap();
         let script = parse(tokens).unwrap();
         match &script.handlers[0].body[0] {
             Statement::Fetch { url, target } => {
@@ -1381,8 +1361,7 @@ mod tests {
 
     #[test]
     fn test_parse_string_concat() {
-        let tokens =
-            lex("on test\n  put \"Hello\" & \" World\" into msg\nend test").unwrap();
+        let tokens = lex("on test\n  put \"Hello\" & \" World\" into msg\nend test").unwrap();
         let script = parse(tokens).unwrap();
         match &script.handlers[0].body[0] {
             Statement::Put { value, .. } => match value {
@@ -1395,8 +1374,7 @@ mod tests {
 
     #[test]
     fn test_parse_function_call() {
-        let tokens =
-            lex("on test\n  put length(\"hello\") into n\nend test").unwrap();
+        let tokens = lex("on test\n  put length(\"hello\") into n\nend test").unwrap();
         let script = parse(tokens).unwrap();
         match &script.handlers[0].body[0] {
             Statement::Put { value, .. } => match value {
@@ -1429,8 +1407,7 @@ mod tests {
 
     #[test]
     fn test_parse_multiple_statements() {
-        let input =
-            "on test\n  put 1 into x\n  put 2 into y\n  put x + y into z\nend test";
+        let input = "on test\n  put 1 into x\n  put 2 into y\n  put x + y into z\nend test";
         let tokens = lex(input).unwrap();
         let script = parse(tokens).unwrap();
         assert_eq!(script.handlers[0].body.len(), 3);
@@ -1463,8 +1440,7 @@ mod tests {
 
     #[test]
     fn test_parse_parenthesized_expression() {
-        let tokens =
-            lex("on test\n  put (1 + 2) * 3 into x\nend test").unwrap();
+        let tokens = lex("on test\n  put (1 + 2) * 3 into x\nend test").unwrap();
         let script = parse(tokens).unwrap();
         match &script.handlers[0].body[0] {
             Statement::Put { value, .. } => match value {
@@ -1488,8 +1464,7 @@ mod tests {
 
     #[test]
     fn test_parse_send() {
-        let tokens =
-            lex("on test\n  send \"mouseUp\" to button \"Go\"\nend test").unwrap();
+        let tokens = lex("on test\n  send \"mouseUp\" to button \"Go\"\nend test").unwrap();
         let script = parse(tokens).unwrap();
         match &script.handlers[0].body[0] {
             Statement::Send { message, target } => {

@@ -1,7 +1,15 @@
 export const VERSION = "0.0.1";
 
 // Theme system
-export type { Theme, ThemeColors, ThemeFonts, ThemeMetrics, ThemeCursors, CursorDef, FillPattern } from "./theme";
+export type {
+  Theme,
+  ThemeColors,
+  ThemeFonts,
+  ThemeMetrics,
+  ThemeCursors,
+  CursorDef,
+  FillPattern,
+} from "./theme";
 export { classicTheme } from "./themes/classic";
 export { v3Theme } from "./themes/v3";
 
@@ -24,6 +32,18 @@ export { MessageBox } from "./components/message-box";
 // Render loop
 export { RenderLoop } from "./render-loop";
 export type { RenderState } from "./render-loop";
+
+// Engine bridge
+export {
+  EngineBridge,
+  WildCardApp,
+  createWildCardApp,
+  parseEngineEvents,
+  extractWaitSeconds,
+  safeParseArray,
+  parseEngineResponse,
+} from "./bridge";
+export type { IWildCardEngine, EngineFactory, CreateAppOptions } from "./bridge";
 
 // Tools
 export type { Tool, ToolEvent, ToolName } from "./tools/tool";

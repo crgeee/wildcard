@@ -96,7 +96,7 @@ export class OvalTool implements Tool {
 
     let px = 0;
     let py = ry;
-    let d1 = ry * ry - rx * rx * ry + rx * rx / 4;
+    let d1 = ry * ry - rx * rx * ry + (rx * rx) / 4;
     let dx = 2 * ry * ry * px;
     let dy = 2 * rx * rx * py;
 

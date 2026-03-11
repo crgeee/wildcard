@@ -45,9 +45,7 @@ impl Runtime {
                     GoDestination::Prev => ("prev".to_string(), None),
                     GoDestination::First => ("first".to_string(), None),
                     GoDestination::Last => ("last".to_string(), None),
-                    GoDestination::CardByName(name) => {
-                        ("direct".to_string(), Some(name.clone()))
-                    }
+                    GoDestination::CardByName(name) => ("direct".to_string(), Some(name.clone())),
                     GoDestination::CardByExpr(expr) => {
                         let val = self.evaluate_expression(expr)?;
                         ("direct".to_string(), Some(val.to_text()))
@@ -325,15 +323,17 @@ impl Runtime {
                     Ok(Value::Number(left.to_number() % r))
                 }
             }
-            BinaryOp::Exponent => {
-                Ok(Value::Number(left.to_number().powf(right.to_number())))
-            }
-            BinaryOp::Concat => {
-                Ok(Value::Text(format!("{}{}", left.to_text(), right.to_text())))
-            }
-            BinaryOp::ConcatWithSpace => {
-                Ok(Value::Text(format!("{} {}", left.to_text(), right.to_text())))
-            }
+            BinaryOp::Exponent => Ok(Value::Number(left.to_number().powf(right.to_number()))),
+            BinaryOp::Concat => Ok(Value::Text(format!(
+                "{}{}",
+                left.to_text(),
+                right.to_text()
+            ))),
+            BinaryOp::ConcatWithSpace => Ok(Value::Text(format!(
+                "{} {}",
+                left.to_text(),
+                right.to_text()
+            ))),
             BinaryOp::Equal | BinaryOp::Is => {
                 // HyperTalk comparison is case-insensitive for strings
                 let result = left.to_text().to_lowercase() == right.to_text().to_lowercase();
@@ -346,9 +346,7 @@ impl Runtime {
             BinaryOp::LessThan => Ok(Value::Boolean(left.to_number() < right.to_number())),
             BinaryOp::GreaterThan => Ok(Value::Boolean(left.to_number() > right.to_number())),
             BinaryOp::LessOrEqual => Ok(Value::Boolean(left.to_number() <= right.to_number())),
-            BinaryOp::GreaterOrEqual => {
-                Ok(Value::Boolean(left.to_number() >= right.to_number()))
-            }
+            BinaryOp::GreaterOrEqual => Ok(Value::Boolean(left.to_number() >= right.to_number())),
             BinaryOp::And => Ok(Value::Boolean(left.is_truthy() && right.is_truthy())),
             BinaryOp::Or => Ok(Value::Boolean(left.is_truthy() || right.is_truthy())),
             BinaryOp::Contains => {
@@ -392,11 +390,10 @@ impl Runtime {
             }
             Expression::Variable(name) => name.clone(),
             Expression::StringLiteral(s) => s.clone(),
-            _ => {
-                self.evaluate_expression(expr)
-                    .map(|v| v.to_text())
-                    .unwrap_or_default()
-            }
+            _ => self
+                .evaluate_expression(expr)
+                .map(|v| v.to_text())
+                .unwrap_or_default(),
         }
     }
 
@@ -631,10 +628,7 @@ mod tests {
         )
         .unwrap();
         rt.send_message("test");
-        assert_eq!(
-            rt.get_variable("result"),
-            Some(Value::Text("yes".into()))
-        );
+        assert_eq!(rt.get_variable("result"), Some(Value::Text("yes".into())));
     }
 
     #[test]
@@ -645,10 +639,7 @@ mod tests {
         )
         .unwrap();
         rt.send_message("test");
-        assert_eq!(
-            rt.get_variable("result"),
-            Some(Value::Text("no".into()))
-        );
+        assert_eq!(rt.get_variable("result"), Some(Value::Text("no".into())));
     }
 
     #[test]
@@ -665,10 +656,8 @@ mod tests {
     #[test]
     fn test_string_concat() {
         let mut rt = Runtime::new_test();
-        rt.load_script(
-            "on test\n  put \"Hello\" & \" World\" into msg\nend test",
-        )
-        .unwrap();
+        rt.load_script("on test\n  put \"Hello\" & \" World\" into msg\nend test")
+            .unwrap();
         rt.send_message("test");
         assert_eq!(
             rt.get_variable("msg"),
@@ -679,10 +668,8 @@ mod tests {
     #[test]
     fn test_string_concat_with_space() {
         let mut rt = Runtime::new_test();
-        rt.load_script(
-            "on test\n  put \"Hello\" && \"World\" into msg\nend test",
-        )
-        .unwrap();
+        rt.load_script("on test\n  put \"Hello\" && \"World\" into msg\nend test")
+            .unwrap();
         rt.send_message("test");
         assert_eq!(
             rt.get_variable("msg"),
@@ -742,10 +729,8 @@ mod tests {
     #[test]
     fn test_set_property_emits_event() {
         let mut rt = Runtime::new_test();
-        rt.load_script(
-            "on test\n  set the color of button \"submit\" to \"red\"\nend test",
-        )
-        .unwrap();
+        rt.load_script("on test\n  set the color of button \"submit\" to \"red\"\nend test")
+            .unwrap();
         rt.send_message("test");
         assert!(rt.events().iter().any(
             |e| matches!(e, EngineOutput::SetProperty { property, value, .. } if property == "color" && value == "red")
@@ -782,9 +767,10 @@ mod tests {
         rt.load_script("on test\n  play sound \"click.wav\"\nend test")
             .unwrap();
         rt.send_message("test");
-        assert!(rt.events().iter().any(
-            |e| matches!(e, EngineOutput::PlaySound { sound } if sound == "click.wav")
-        ));
+        assert!(rt
+            .events()
+            .iter()
+            .any(|e| matches!(e, EngineOutput::PlaySound { sound } if sound == "click.wav")));
     }
 
     #[test]
@@ -829,10 +815,8 @@ mod tests {
     #[test]
     fn test_comparison_greater() {
         let mut rt = Runtime::new_test();
-        rt.load_script(
-            "on test\n  if 5 > 3 then\n    put \"yes\" into x\n  end if\nend test",
-        )
-        .unwrap();
+        rt.load_script("on test\n  if 5 > 3 then\n    put \"yes\" into x\n  end if\nend test")
+            .unwrap();
         rt.send_message("test");
         assert_eq!(rt.get_variable("x"), Some(Value::Text("yes".into())));
     }
@@ -840,10 +824,8 @@ mod tests {
     #[test]
     fn test_comparison_less() {
         let mut rt = Runtime::new_test();
-        rt.load_script(
-            "on test\n  if 2 < 5 then\n    put \"yes\" into x\n  end if\nend test",
-        )
-        .unwrap();
+        rt.load_script("on test\n  if 2 < 5 then\n    put \"yes\" into x\n  end if\nend test")
+            .unwrap();
         rt.send_message("test");
         assert_eq!(rt.get_variable("x"), Some(Value::Text("yes".into())));
     }
@@ -873,10 +855,8 @@ mod tests {
     #[test]
     fn test_boolean_not() {
         let mut rt = Runtime::new_test();
-        rt.load_script(
-            "on test\n  if not false then\n    put \"yes\" into x\n  end if\nend test",
-        )
-        .unwrap();
+        rt.load_script("on test\n  if not false then\n    put \"yes\" into x\n  end if\nend test")
+            .unwrap();
         rt.send_message("test");
         assert_eq!(rt.get_variable("x"), Some(Value::Text("yes".into())));
     }
@@ -884,25 +864,18 @@ mod tests {
     #[test]
     fn test_put_into_field() {
         let mut rt = Runtime::new_test();
-        rt.load_script(
-            "on test\n  put \"Hello\" into field \"greeting\"\nend test",
-        )
-        .unwrap();
+        rt.load_script("on test\n  put \"Hello\" into field \"greeting\"\nend test")
+            .unwrap();
         rt.send_message("test");
-        assert_eq!(
-            rt.fields.get("greeting"),
-            Some(&"Hello".to_string())
-        );
+        assert_eq!(rt.fields.get("greeting"), Some(&"Hello".to_string()));
     }
 
     #[test]
     fn test_read_from_field() {
         let mut rt = Runtime::new_test();
         rt.fields.insert("name".to_string(), "Alice".to_string());
-        rt.load_script(
-            "on test\n  put field \"name\" into x\nend test",
-        )
-        .unwrap();
+        rt.load_script("on test\n  put field \"name\" into x\nend test")
+            .unwrap();
         rt.send_message("test");
         assert_eq!(rt.get_variable("x"), Some(Value::Text("Alice".into())));
     }
@@ -922,10 +895,8 @@ mod tests {
     #[test]
     fn test_function_length() {
         let mut rt = Runtime::new_test();
-        rt.load_script(
-            "on test\n  put length(\"hello\") into n\nend test",
-        )
-        .unwrap();
+        rt.load_script("on test\n  put length(\"hello\") into n\nend test")
+            .unwrap();
         rt.send_message("test");
         assert_eq!(rt.get_variable("n"), Some(Value::Number(5.0)));
     }
@@ -944,10 +915,8 @@ mod tests {
         let mut rt = Runtime::new_test();
         rt.fields
             .insert("data".to_string(), "hello world foo".to_string());
-        rt.load_script(
-            "on test\n  put word 2 of field \"data\" into x\nend test",
-        )
-        .unwrap();
+        rt.load_script("on test\n  put word 2 of field \"data\" into x\nend test")
+            .unwrap();
         rt.send_message("test");
         assert_eq!(rt.get_variable("x"), Some(Value::Text("world".into())));
     }
@@ -957,10 +926,8 @@ mod tests {
         let mut rt = Runtime::new_test();
         rt.fields
             .insert("data".to_string(), "hello world foo".to_string());
-        rt.load_script(
-            "on test\n  put the first word of field \"data\" into x\nend test",
-        )
-        .unwrap();
+        rt.load_script("on test\n  put the first word of field \"data\" into x\nend test")
+            .unwrap();
         rt.send_message("test");
         assert_eq!(rt.get_variable("x"), Some(Value::Text("hello".into())));
     }
@@ -970,10 +937,8 @@ mod tests {
         let mut rt = Runtime::new_test();
         rt.fields
             .insert("data".to_string(), "hello world foo".to_string());
-        rt.load_script(
-            "on test\n  put the last word of field \"data\" into x\nend test",
-        )
-        .unwrap();
+        rt.load_script("on test\n  put the last word of field \"data\" into x\nend test")
+            .unwrap();
         rt.send_message("test");
         assert_eq!(rt.get_variable("x"), Some(Value::Text("foo".into())));
     }
@@ -1014,10 +979,8 @@ mod tests {
     #[test]
     fn test_fetch_emits_event() {
         let mut rt = Runtime::new_test();
-        rt.load_script(
-            "on test\n  fetch \"https://api.example.com\" into result\nend test",
-        )
-        .unwrap();
+        rt.load_script("on test\n  fetch \"https://api.example.com\" into result\nend test")
+            .unwrap();
         rt.send_message("test");
         assert!(rt.events().iter().any(
             |e| matches!(e, EngineOutput::FetchUrl { url, .. } if url == "https://api.example.com")
@@ -1046,10 +1009,8 @@ mod tests {
     #[test]
     fn test_value_coercion_text_to_number() {
         let mut rt = Runtime::new_test();
-        rt.load_script(
-            "on test\n  put \"10\" into x\n  put x + 5 into y\nend test",
-        )
-        .unwrap();
+        rt.load_script("on test\n  put \"10\" into x\n  put x + 5 into y\nend test")
+            .unwrap();
         rt.send_message("test");
         assert_eq!(rt.get_variable("y"), Some(Value::Number(15.0)));
     }
@@ -1057,10 +1018,8 @@ mod tests {
     #[test]
     fn test_handler_with_params() {
         let mut rt = Runtime::new_test();
-        rt.load_script(
-            "on doAdd a, b\n  put a + b into result\nend doAdd",
-        )
-        .unwrap();
+        rt.load_script("on doAdd a, b\n  put a + b into result\nend doAdd")
+            .unwrap();
         rt.send_message_with_args("doAdd", &[Value::Number(3.0), Value::Number(4.0)]);
         assert_eq!(rt.get_variable("result"), Some(Value::Number(7.0)));
     }

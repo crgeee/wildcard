@@ -131,12 +131,7 @@ export function drawTitleBar(
   const textX = rect.x + rect.width / 2;
   const textY = rect.y + height / 2;
   ctx.fillStyle = theme.colors.titleBar;
-  ctx.fillRect(
-    textX - textMetrics.width / 2 - 4,
-    rect.y + 1,
-    textMetrics.width + 8,
-    height - 2,
-  );
+  ctx.fillRect(textX - textMetrics.width / 2 - 4, rect.y + 1, textMetrics.width + 8, height - 2);
 
   ctx.fillStyle = isActive ? theme.colors.foreground : theme.colors.disabled;
   ctx.fillText(title, textX, textY);

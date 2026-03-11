@@ -150,10 +150,7 @@ export class WindowChrome {
     if (!sbRect) return false;
     const arrowSize = this._theme.metrics.fieldScrollArrowSize;
     return (
-      x >= sbRect.x &&
-      x < sbRect.x + sbRect.width &&
-      y >= sbRect.y &&
-      y < sbRect.y + arrowSize
+      x >= sbRect.x && x < sbRect.x + sbRect.width && y >= sbRect.y && y < sbRect.y + arrowSize
     );
   }
 
@@ -178,11 +175,7 @@ export class WindowChrome {
 /**
  * Draw a window to a canvas 2D context.
  */
-export function drawWindow(
-  ctx: CanvasRenderingContext2D,
-  theme: Theme,
-  state: WindowState,
-): void {
+export function drawWindow(ctx: CanvasRenderingContext2D, theme: Theme, state: WindowState): void {
   if (!state.visible) return;
 
   const { rect } = state;
@@ -191,12 +184,7 @@ export function drawWindow(
 
   // Window shadow
   ctx.fillStyle = theme.colors.shadow;
-  ctx.fillRect(
-    rect.x + shadowOffset,
-    rect.y + shadowOffset,
-    rect.width,
-    rect.height,
-  );
+  ctx.fillRect(rect.x + shadowOffset, rect.y + shadowOffset, rect.width, rect.height);
 
   // Window background
   ctx.fillStyle = theme.colors.windowBackground;
@@ -225,11 +213,7 @@ export function drawWindow(
  * Draw the classic Mac scrollbar (scroll arrows, not scroll thumb).
  * Classic HyperCard fields use scroll arrows, not a thumb/track.
  */
-function drawScrollbar(
-  ctx: CanvasRenderingContext2D,
-  theme: Theme,
-  state: WindowState,
-): void {
+function drawScrollbar(ctx: CanvasRenderingContext2D, theme: Theme, state: WindowState): void {
   const titleH = theme.metrics.titleBarHeight;
   const border = theme.metrics.borderWidth;
   const scrollW = theme.metrics.scrollbarWidth;

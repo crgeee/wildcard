@@ -63,9 +63,7 @@ export class KeyboardHandler {
   /** Remove all shortcuts for a key+modifier combination */
   removeShortcut(key: string, modifiers: Modifier[]): void {
     this._shortcuts = this._shortcuts.filter(
-      (s) =>
-        s.key !== key.toLowerCase() ||
-        !this._modifiersMatch(s.modifiers, modifiers),
+      (s) => s.key !== key.toLowerCase() || !this._modifiersMatch(s.modifiers, modifiers),
     );
   }
 

@@ -99,7 +99,7 @@ export function drawButton(
 ): void {
   if (!state.visible) return;
 
-  const { rect, style } = state;
+  const { style } = state;
 
   switch (style) {
     case "roundRect":
@@ -128,7 +128,7 @@ function drawRoundRectButton(
   theme: Theme,
   state: ButtonRenderState,
 ): void {
-  const { rect, fillColor, textColor, borderColor, borderRadius } = state;
+  const { rect, fillColor, borderColor, borderRadius } = state;
 
   // Fill
   roundRect(ctx, rect.x, rect.y, rect.width, rect.height, borderRadius);
@@ -184,11 +184,7 @@ function drawShadowButton(
   drawButtonLabel(ctx, theme, state);
 }
 
-function drawCheckbox(
-  ctx: CanvasRenderingContext2D,
-  theme: Theme,
-  state: ButtonRenderState,
-): void {
+function drawCheckbox(ctx: CanvasRenderingContext2D, theme: Theme, state: ButtonRenderState): void {
   const { rect, checked, textColor } = state;
   const boxSize = 12;
   const boxY = rect.y + Math.floor((rect.height - boxSize) / 2);
@@ -275,7 +271,11 @@ function drawButtonLabel(
   ctx.font = `${theme.fonts.systemSize}px ${theme.fonts.system}`;
   ctx.textBaseline = "middle";
   ctx.textAlign = "center";
-  ctx.fillText(state.label, state.rect.x + state.rect.width / 2, state.rect.y + state.rect.height / 2);
+  ctx.fillText(
+    state.label,
+    state.rect.x + state.rect.width / 2,
+    state.rect.y + state.rect.height / 2,
+  );
   ctx.textAlign = "left";
 }
 

@@ -1,6 +1,6 @@
 # WildCard — Design Document
 
-*"The HyperCard 3.0 that Apple never shipped."*
+_"The HyperCard 3.0 that Apple never shipped."_
 
 **Date**: 2026-03-10
 **Status**: Approved
@@ -47,7 +47,7 @@ What this means in practice:
 - **The same sounds and feel**: Menu clicks, button highlights, card transitions (dissolve,
   wipe, barn door). The visual effects that made HyperCard feel alive.
 - **The 3.0 layer is additive, not replacement**: When you toggle to 3.0 mode, the color and
-  new features appear *within* the classic chrome. The window frames, menus, and interaction
+  new features appear _within_ the classic chrome. The window frames, menus, and interaction
   model stay the same. It should feel like someone at Apple in 1996 added color support to
   HyperCard — not like a modern redesign.
 
@@ -86,12 +86,12 @@ wildcard/
 
 ### Package Responsibilities
 
-| Package | Language | Responsibility |
-|---------|----------|----------------|
-| `@wildcard/engine` | Rust → WASM | WildTalk parser, interpreter, stack/card data model, event system |
-| `@wildcard/renderer` | TypeScript | Canvas 2D rendering — retro Mac UI, two skins (Classic + 3.0), paint tools |
-| `@wildcard/types` | TypeScript | Shared type definitions, stack file format (JSON), JS↔WASM FFI bridge |
-| `wildcard-web` | TypeScript | Hono API + Vite SPA — editor, player, gallery, auth, moderation, SEO |
+| Package              | Language    | Responsibility                                                             |
+| -------------------- | ----------- | -------------------------------------------------------------------------- |
+| `@wildcard/engine`   | Rust → WASM | WildTalk parser, interpreter, stack/card data model, event system          |
+| `@wildcard/renderer` | TypeScript  | Canvas 2D rendering — retro Mac UI, two skins (Classic + 3.0), paint tools |
+| `@wildcard/types`    | TypeScript  | Shared type definitions, stack file format (JSON), JS↔WASM FFI bridge      |
+| `wildcard-web`       | TypeScript  | Hono API + Vite SPA — editor, player, gallery, auth, moderation, SEO       |
 
 ### Data Flow
 
@@ -193,13 +193,13 @@ the spec. Every pixel matters.
 
 ### Two Skins (Togglable)
 
-| Mode | Look |
-|------|------|
-| **Classic** | Pure 1-bit black-and-white, System 7 chrome, Chicago-style font, exactly how HyperCard looked 1987–1998 |
-| **3.0** | Color inside cards, smoother UI, the imagined evolution — but still using the same window chrome and interaction model |
+| Mode        | Look                                                                                                                   |
+| ----------- | ---------------------------------------------------------------------------------------------------------------------- |
+| **Classic** | Pure 1-bit black-and-white, System 7 chrome, Chicago-style font, exactly how HyperCard looked 1987–1998                |
+| **3.0**     | Color inside cards, smoother UI, the imagined evolution — but still using the same window chrome and interaction model |
 
-Toggle is in the menu bar. Contextual tooltip explains: *"Classic: HyperCard 2.4, 1998"* /
-*"3.0: The unreleased version, imagined."*
+Toggle is in the menu bar. Contextual tooltip explains: _"Classic: HyperCard 2.4, 1998"_ /
+_"3.0: The unreleased version, imagined."_
 
 Same stack, same scripts — only the rendering pass changes. The engine doesn't care.
 
@@ -230,14 +230,14 @@ Everything drawn to `<canvas>` — no DOM for the HyperCard UI:
 
 ### UI Components
 
-| Component | Description |
-|-----------|-------------|
-| **Menu bar** | File, Edit, Go, Tools, Objects — classic Mac dropdowns |
-| **Card canvas** | Main area for displaying and editing cards |
-| **Tool palette** | Floating: browse, button, field, select, pencil, brush, eraser, line, rect, oval, spray, bucket, text |
-| **Inspector** | Edit properties of selected objects (name, script, style, color) |
-| **Script editor** | WildTalk editor with syntax highlighting, opens as a "window" |
-| **Message box** | Bottom bar for typing live WildTalk commands |
+| Component         | Description                                                                                           |
+| ----------------- | ----------------------------------------------------------------------------------------------------- |
+| **Menu bar**      | File, Edit, Go, Tools, Objects — classic Mac dropdowns                                                |
+| **Card canvas**   | Main area for displaying and editing cards                                                            |
+| **Tool palette**  | Floating: browse, button, field, select, pencil, brush, eraser, line, rect, oval, spray, bucket, text |
+| **Inspector**     | Edit properties of selected objects (name, script, style, color)                                      |
+| **Script editor** | WildTalk editor with syntax highlighting, opens as a "window"                                         |
+| **Message box**   | Bottom bar for typing live WildTalk commands                                                          |
 
 ### User Levels (Progressive Disclosure)
 
@@ -255,37 +255,37 @@ New users start at level 1 and graduate up. Educational by design.
 
 ### Three Modes
 
-| Mode | Purpose |
-|------|---------|
-| **Player** | Browse/interact with stacks, no account needed |
-| **Editor** | Full authoring environment |
+| Mode        | Purpose                                                     |
+| ----------- | ----------------------------------------------------------- |
+| **Player**  | Browse/interact with stacks, no account needed              |
+| **Editor**  | Full authoring environment                                  |
 | **Gallery** | Community hub — browse, search, remix, featured collections |
 
 ### No-Account Experience
 
-| Feature | Without account | With account |
-|---------|----------------|-------------|
-| Browse/play stacks | Full access | Full access |
-| Create/edit stacks | Full editor, saved to localStorage | Saved to cloud |
-| Paint tools & WildTalk | Full access | Full access |
-| Export as HTML | Yes | Yes |
-| Publish to gallery | No — prompt to sign up | Yes |
-| Shareable links | No — prompt to sign up | Yes |
-| Remix a stack | Fork to localStorage | Fork to cloud |
+| Feature                | Without account                    | With account   |
+| ---------------------- | ---------------------------------- | -------------- |
+| Browse/play stacks     | Full access                        | Full access    |
+| Create/edit stacks     | Full editor, saved to localStorage | Saved to cloud |
+| Paint tools & WildTalk | Full access                        | Full access    |
+| Export as HTML         | Yes                                | Yes            |
+| Publish to gallery     | No — prompt to sign up             | Yes            |
+| Shareable links        | No — prompt to sign up             | Yes            |
+| Remix a stack          | Fork to localStorage               | Fork to cloud  |
 
 localStorage work transfers seamlessly when a user creates an account.
 
 ### Tech Stack
 
-| Layer | Choice | Rationale |
-|-------|--------|-----------|
-| API | Hono on Node | Lightweight, fast, known |
-| SPA shell | Vite + minimal TS (Preact for UI chrome) | Keep DOM layer thin — Canvas does the heavy lifting |
-| Database | PostgreSQL | Stack metadata, users, gallery, moderation queue |
-| File storage | Hetzner Object Storage (S3-compatible) | Stack files, images, sounds |
-| Auth | Email/password + GitHub OAuth | Simple to start |
-| Content moderation | AI scan on publish + user reporting + manual review queue | Text + image scanning |
-| Process manager | pm2 | Known, simple |
+| Layer              | Choice                                                    | Rationale                                           |
+| ------------------ | --------------------------------------------------------- | --------------------------------------------------- |
+| API                | Hono on Node                                              | Lightweight, fast, known                            |
+| SPA shell          | Vite + minimal TS (Preact for UI chrome)                  | Keep DOM layer thin — Canvas does the heavy lifting |
+| Database           | PostgreSQL                                                | Stack metadata, users, gallery, moderation queue    |
+| File storage       | Hetzner Object Storage (S3-compatible)                    | Stack files, images, sounds                         |
+| Auth               | Email/password + GitHub OAuth                             | Simple to start                                     |
+| Content moderation | AI scan on publish + user reporting + manual review queue | Text + image scanning                               |
+| Process manager    | pm2                                                       | Known, simple                                       |
 
 ### Sharing
 
@@ -297,25 +297,25 @@ localStorage work transfers seamlessly when a user creates an account.
 
 ## 6. Performance
 
-| Layer | Strategy |
-|-------|----------|
-| Engine (WASM) | Near-native script execution. ~5ms cold start. Stack files parsed in Rust. |
-| Renderer | `OffscreenCanvas` + `requestAnimationFrame`. Dirty-region repainting. Layer caching for backgrounds. |
-| Asset loading | Lazy-load per card. Images as WebP on Object Storage with CDN. |
-| Web app | Static shell < 50KB gzipped (before WASM). WASM async loaded. Service worker for offline. |
-| Gallery | Pre-generated thumbnails. Paginated API. SSR for meta tags. |
+| Layer         | Strategy                                                                                             |
+| ------------- | ---------------------------------------------------------------------------------------------------- |
+| Engine (WASM) | Near-native script execution. ~5ms cold start. Stack files parsed in Rust.                           |
+| Renderer      | `OffscreenCanvas` + `requestAnimationFrame`. Dirty-region repainting. Layer caching for backgrounds. |
+| Asset loading | Lazy-load per card. Images as WebP on Object Storage with CDN.                                       |
+| Web app       | Static shell < 50KB gzipped (before WASM). WASM async loaded. Service worker for offline.            |
+| Gallery       | Pre-generated thumbnails. Paginated API. SSR for meta tags.                                          |
 
 ---
 
 ## 7. Cross-Device Support
 
-| Concern | Approach |
-|---------|----------|
+| Concern           | Approach                                                                                                                       |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------ |
 | Responsive canvas | Scales to viewport, maintains logical resolution (512x342 classic / custom in 3.0). Nearest-neighbor upscale for crisp pixels. |
-| Touch | Touch events mapped to mouseUp/mouseDown/mouseDrag. Pinch-to-zoom. |
-| Mobile editing | Collapsed tool palette as bottom drawer. Mobile-friendly script editor. |
-| Tablet | Full editor with touch. Apple Pencil support for paint tools. |
-| Keyboard | Full shortcuts on desktop, long-press context menus on touch. |
+| Touch             | Touch events mapped to mouseUp/mouseDown/mouseDrag. Pinch-to-zoom.                                                             |
+| Mobile editing    | Collapsed tool palette as bottom drawer. Mobile-friendly script editor.                                                        |
+| Tablet            | Full editor with touch. Apple Pencil support for paint tools.                                                                  |
+| Keyboard          | Full shortcuts on desktop, long-press context menus on touch.                                                                  |
 
 ---
 
@@ -323,11 +323,11 @@ localStorage work transfers seamlessly when a user creates an account.
 
 Three extension points:
 
-| Extension | What it enables | Example |
-|-----------|----------------|---------|
-| Custom WildTalk commands | Register new verbs/functions | `translate field "text" to "spanish"` |
-| Render themes | Swap visual skin | "Windows 3.1" theme, "NeXT" theme, "modern flat" theme |
-| Tool palettes | Add authoring/paint tools | Pixel art brush pack, shape library, chart widget |
+| Extension                | What it enables              | Example                                                |
+| ------------------------ | ---------------------------- | ------------------------------------------------------ |
+| Custom WildTalk commands | Register new verbs/functions | `translate field "text" to "spanish"`                  |
+| Render themes            | Swap visual skin             | "Windows 3.1" theme, "NeXT" theme, "modern flat" theme |
+| Tool palettes            | Add authoring/paint tools    | Pixel art brush pack, shape library, chart widget      |
 
 ### How Extensions Work
 
@@ -340,27 +340,27 @@ Three extension points:
 
 ## 9. Historical Context & Education
 
-| Where | What |
-|-------|------|
-| Onboarding | Interactive intro stack (built in WildCard) telling the HyperCard story |
-| About page | Timeline 1987–2004, with screenshots and context |
-| Classic/3.0 toggle | Tooltip explaining what each mode represents |
-| Starter templates | Recreations of famous HyperCard stacks with historical notes |
-| /learn section | Tutorials on WildTalk, HyperCard history, building stacks |
+| Where              | What                                                                    |
+| ------------------ | ----------------------------------------------------------------------- |
+| Onboarding         | Interactive intro stack (built in WildCard) telling the HyperCard story |
+| About page         | Timeline 1987–2004, with screenshots and context                        |
+| Classic/3.0 toggle | Tooltip explaining what each mode represents                            |
+| Starter templates  | Recreations of famous HyperCard stacks with historical notes            |
+| /learn section     | Tutorials on WildTalk, HyperCard history, building stacks               |
 
 ---
 
 ## 10. SEO
 
-| Strategy | Implementation |
-|----------|---------------|
+| Strategy          | Implementation                                                                    |
+| ----------------- | --------------------------------------------------------------------------------- |
 | SSR gallery pages | Each stack permalink has server-rendered meta tags, title, description, thumbnail |
-| /learn content | Static pages: HyperCard history, WildTalk tutorials. Long-tail keyword targets. |
-| Open Graph | Every shared stack generates preview image + metadata for social cards |
-| Structured data | JSON-LD for software application, creative works, educational content |
-| Sitemap | Auto-generated from gallery + learn pages |
-| Semantic URLs | `/learn/what-was-hypercard`, `/learn/wildtalk-basics`, `/s/my-cool-stack` |
-| Page speed | Tiny shell, async WASM, pre-rendered thumbnails. Target 90+ Lighthouse. |
+| /learn content    | Static pages: HyperCard history, WildTalk tutorials. Long-tail keyword targets.   |
+| Open Graph        | Every shared stack generates preview image + metadata for social cards            |
+| Structured data   | JSON-LD for software application, creative works, educational content             |
+| Sitemap           | Auto-generated from gallery + learn pages                                         |
+| Semantic URLs     | `/learn/what-was-hypercard`, `/learn/wildtalk-basics`, `/s/my-cool-stack`         |
+| Page speed        | Tiny shell, async WASM, pre-rendered thumbnails. Target 90+ Lighthouse.           |
 
 ---
 
@@ -399,18 +399,18 @@ Three extension points:
 
 ### CI Pipeline (GitHub Actions)
 
-| Job | What |
-|-----|------|
-| `lint` | ESLint (TS) + Clippy (Rust) |
-| `format` | Prettier (TS) + rustfmt (Rust) |
-| `typecheck` | `tsc --noEmit` on all TS packages |
-| `test-engine` | `cargo test` |
-| `test-renderer` | Vitest |
-| `test-web` | Vitest |
-| `build-wasm` | `wasm-pack build` |
-| `build-web` | Vite build |
-| `license-check` | Ensure MIT/Apache compatible dependencies |
-| `security-audit` | `cargo audit` + `npm audit` |
+| Job              | What                                      |
+| ---------------- | ----------------------------------------- |
+| `lint`           | ESLint (TS) + Clippy (Rust)               |
+| `format`         | Prettier (TS) + rustfmt (Rust)            |
+| `typecheck`      | `tsc --noEmit` on all TS packages         |
+| `test-engine`    | `cargo test`                              |
+| `test-renderer`  | Vitest                                    |
+| `test-web`       | Vitest                                    |
+| `build-wasm`     | `wasm-pack build`                         |
+| `build-web`      | Vite build                                |
+| `license-check`  | Ensure MIT/Apache compatible dependencies |
+| `security-audit` | `cargo audit` + `npm audit`               |
 
 All jobs run on PR and push to `main`. WASM build cached for speed.
 
@@ -433,15 +433,15 @@ All jobs run on PR and push to `main`. WASM build cached for speed.
    └────────┘ └────────┘ └──────┘ └──────┘ └────────┘ └────────┘
 ```
 
-| Agent | Owns | Responsibilities |
-|-------|------|-----------------|
-| **Team Lead** | Everything | Phase gating, PR reviews, integration, conflict resolution, release management |
-| **Engine Agent** | `@wildcard/engine`, `@wildcard/types` | WildTalk lexer/parser/interpreter, WASM build, FFI bridge, stack data model |
-| **Renderer Agent** | `@wildcard/renderer` | Canvas 2D, themes (Classic + 3.0), paint tools, Tool interface, responsive layout. Must use real HyperCard screenshots as reference. |
-| **Backend Agent** | `apps/web/src/server/` | Hono API, PostgreSQL schema, auth, gallery endpoints, content moderation, S3 storage |
-| **Frontend Agent** | `apps/web/src/` (client) | Preact SPA, routing, editor UI, player, gallery page, learn pages, legal page, SEO/OG tags |
-| **Security Agent** | Cross-cutting | Dependency audits, secret scanning, CSP headers, input sanitization, WASM sandboxing, moderation review |
-| **CI/Perf Agent** | `.github/`, infra | GitHub Actions, Lighthouse audits, WASM bundle size, render perf profiling, deployment, caching |
+| Agent              | Owns                                  | Responsibilities                                                                                                                     |
+| ------------------ | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| **Team Lead**      | Everything                            | Phase gating, PR reviews, integration, conflict resolution, release management                                                       |
+| **Engine Agent**   | `@wildcard/engine`, `@wildcard/types` | WildTalk lexer/parser/interpreter, WASM build, FFI bridge, stack data model                                                          |
+| **Renderer Agent** | `@wildcard/renderer`                  | Canvas 2D, themes (Classic + 3.0), paint tools, Tool interface, responsive layout. Must use real HyperCard screenshots as reference. |
+| **Backend Agent**  | `apps/web/src/server/`                | Hono API, PostgreSQL schema, auth, gallery endpoints, content moderation, S3 storage                                                 |
+| **Frontend Agent** | `apps/web/src/` (client)              | Preact SPA, routing, editor UI, player, gallery page, learn pages, legal page, SEO/OG tags                                           |
+| **Security Agent** | Cross-cutting                         | Dependency audits, secret scanning, CSP headers, input sanitization, WASM sandboxing, moderation review                              |
+| **CI/Perf Agent**  | `.github/`, infra                     | GitHub Actions, Lighthouse audits, WASM bundle size, render perf profiling, deployment, caching                                      |
 
 ---
 
@@ -464,50 +464,50 @@ Before writing any rendering code, every agent MUST spend time in real HyperCard
 
 ### Core Documentation (PDFs)
 
-| Document | URL |
-|----------|-----|
-| HyperCard Script Language Guide | https://cancel.fm/stuff/share/HyperCard_Script_Language_Guide_1.pdf |
-| HyperCard Reference Manual 2.3.5 | https://cancel.fm/stuff/share/HyperCard_Reference_1.pdf |
-| HyperTalk Reference 2.4 | https://hypercard.org/HyperTalk%20Reference%202.4.pdf |
-| HyperCard User's Guide (1987) | https://vintageapple.org/macprogramming/pdf/HyperCard_Users_Guide_1987.pdf |
-| HyperTalk Beginner's Guide | https://vintageapple.org/macbooks/pdf/HyperTalk_Beginners_Guide_An_Introduction_to_Scripting_1989.pdf |
+| Document                         | URL                                                                                                   |
+| -------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| HyperCard Script Language Guide  | https://cancel.fm/stuff/share/HyperCard_Script_Language_Guide_1.pdf                                   |
+| HyperCard Reference Manual 2.3.5 | https://cancel.fm/stuff/share/HyperCard_Reference_1.pdf                                               |
+| HyperTalk Reference 2.4          | https://hypercard.org/HyperTalk%20Reference%202.4.pdf                                                 |
+| HyperCard User's Guide (1987)    | https://vintageapple.org/macprogramming/pdf/HyperCard_Users_Guide_1987.pdf                            |
+| HyperTalk Beginner's Guide       | https://vintageapple.org/macbooks/pdf/HyperTalk_Beginners_Guide_An_Introduction_to_Scripting_1989.pdf |
 
 ### Visual References
 
-| Resource | URL | What it shows |
-|----------|-----|---------------|
-| Folkstream: HyperCard Menus | https://folkstream.com/muse/teachhc/menu/menu.html | All menus with screenshots |
-| Folkstream: Teach HyperCard | https://folkstream.com/muse/teachhc/ | Full tutorial with UI screenshots |
-| hypercard.org | https://hypercard.org/ | Fan site with extensive visual material |
-| WyldCard Wiki | https://github.com/defano/wyldcard/wiki | Faithful recreation with visual examples of all button/field styles |
-| HyperCard Center | https://www.hypercard.center/HyperTalkReference | Best online HyperTalk reference |
+| Resource                    | URL                                                | What it shows                                                       |
+| --------------------------- | -------------------------------------------------- | ------------------------------------------------------------------- |
+| Folkstream: HyperCard Menus | https://folkstream.com/muse/teachhc/menu/menu.html | All menus with screenshots                                          |
+| Folkstream: Teach HyperCard | https://folkstream.com/muse/teachhc/               | Full tutorial with UI screenshots                                   |
+| hypercard.org               | https://hypercard.org/                             | Fan site with extensive visual material                             |
+| WyldCard Wiki               | https://github.com/defano/wyldcard/wiki            | Faithful recreation with visual examples of all button/field styles |
+| HyperCard Center            | https://www.hypercard.center/HyperTalkReference    | Best online HyperTalk reference                                     |
 
 ### Video References
 
-| Video | URL | What it shows |
-|-------|-----|---------------|
-| Computer Chronicles: HyperCard (1987) | https://archive.org/details/CC501_hypercard | Bill Atkinson demos HyperCard live |
-| HyperCard 2.0 Visual Effects | https://archive.org/details/hypercard_hypercard-20-visual-effects | All card transition effects |
+| Video                                 | URL                                                               | What it shows                      |
+| ------------------------------------- | ----------------------------------------------------------------- | ---------------------------------- |
+| Computer Chronicles: HyperCard (1987) | https://archive.org/details/CC501_hypercard                       | Bill Atkinson demos HyperCard live |
+| HyperCard 2.0 Visual Effects          | https://archive.org/details/hypercard_hypercard-20-visual-effects | All card transition effects        |
 
 ### Code References (Study for Exact Behavior)
 
-| Project | URL | Why |
-|---------|-----|-----|
+| Project         | URL                                | Why                                                       |
+| --------------- | ---------------------------------- | --------------------------------------------------------- |
 | WyldCard (Java) | https://github.com/defano/wyldcard | Highest-fidelity recreation. Study for exact UI behavior. |
-| ViperCard (Web) | https://www.vipercard.net/ | Web-based, closest to HyperTalk syntax |
-| Decker | https://beyondloom.com/decker/ | Best polished modern reimagining |
+| ViperCard (Web) | https://www.vipercard.net/         | Web-based, closest to HyperTalk syntax                    |
+| Decker          | https://beyondloom.com/decker/     | Best polished modern reimagining                          |
 
 ### Complete Feature Set to Recreate
 
 #### The Five User Levels
 
-| Level | Name | Unlocks |
-|-------|------|---------|
-| 1 | Browsing | Navigate, click buttons. View only. |
-| 2 | Typing | Edit text in unlocked fields. |
-| 3 | Painting | All paint tools. |
-| 4 | Authoring | Create/edit buttons and fields. Background layer. Power Keys. |
-| 5 | Scripting | Script editor. Message Box. Blind Typing. |
+| Level | Name      | Unlocks                                                       |
+| ----- | --------- | ------------------------------------------------------------- |
+| 1     | Browsing  | Navigate, click buttons. View only.                           |
+| 2     | Typing    | Edit text in unlocked fields.                                 |
+| 3     | Painting  | All paint tools.                                              |
+| 4     | Authoring | Create/edit buttons and fields. Background layer. Power Keys. |
+| 5     | Scripting | Script editor. Message Box. Blind Typing.                     |
 
 #### All 17 Tools
 
@@ -523,19 +523,19 @@ transparent, opaque, rectangle, shadow, scrolling
 
 #### All Card Transition Effects
 
-| Effect | Directions |
-|--------|-----------|
-| barn door | open, close |
-| checkerboard | — |
-| dissolve | — |
-| iris | open, close |
-| plain | — |
-| scroll | up, down, left, right |
-| shrink | to top, to center, to bottom |
-| stretch | from top, from center, from bottom |
-| venetian blinds | — |
-| wipe | up, down, left, right |
-| zoom | open, close, in, out |
+| Effect          | Directions                         |
+| --------------- | ---------------------------------- |
+| barn door       | open, close                        |
+| checkerboard    | —                                  |
+| dissolve        | —                                  |
+| iris            | open, close                        |
+| plain           | —                                  |
+| scroll          | up, down, left, right              |
+| shrink          | to top, to center, to bottom       |
+| stretch         | from top, from center, from bottom |
+| venetian blinds | —                                  |
+| wipe            | up, down, left, right              |
+| zoom            | open, close, in, out               |
 
 Speeds: `very slow`, `slow`, `fast`, `very fast`, or ticks
 

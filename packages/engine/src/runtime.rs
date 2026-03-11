@@ -110,6 +110,7 @@ pub enum EngineOutput {
     },
 }
 
+#[derive(Default)]
 pub struct Runtime {
     pub variables: HashMap<String, Value>,
     pub globals: HashMap<String, Value>,
@@ -122,14 +123,7 @@ pub struct Runtime {
 
 impl Runtime {
     pub fn new() -> Self {
-        Self {
-            variables: HashMap::new(),
-            globals: HashMap::new(),
-            handlers: HashMap::new(),
-            events: Vec::new(),
-            fields: HashMap::new(),
-            current_globals: Vec::new(),
-        }
+        Self::default()
     }
 
     #[cfg(test)]
@@ -265,7 +259,10 @@ impl Runtime {
             .keys()
             .map(|k| serde_json::Value::String(k.clone()))
             .collect();
-        state.insert("handlers".to_string(), serde_json::Value::Array(handler_names));
+        state.insert(
+            "handlers".to_string(),
+            serde_json::Value::Array(handler_names),
+        );
 
         serde_json::to_string(&state).unwrap_or_else(|_| "{}".to_string())
     }
@@ -280,7 +277,11 @@ impl Runtime {
 
     pub fn get_variable(&self, name: &str) -> Option<Value> {
         let lower = name.to_lowercase();
-        if self.current_globals.iter().any(|g| g.to_lowercase() == lower) {
+        if self
+            .current_globals
+            .iter()
+            .any(|g| g.to_lowercase() == lower)
+        {
             self.globals.get(&lower).cloned()
         } else {
             self.variables.get(&lower).cloned()
@@ -289,7 +290,11 @@ impl Runtime {
 
     pub fn set_variable(&mut self, name: &str, value: Value) {
         let lower = name.to_lowercase();
-        if self.current_globals.iter().any(|g| g.to_lowercase() == lower) {
+        if self
+            .current_globals
+            .iter()
+            .any(|g| g.to_lowercase() == lower)
+        {
             self.globals.insert(lower, value);
         } else {
             self.variables.insert(lower, value);

@@ -19,13 +19,15 @@
  */
 
 import type { Theme } from "./theme";
-import type { WildCardStack, WildCardCard, WildCardObject } from "@wildcard/types";
+import type { WildCardStack, WildCardObject } from "@wildcard/types";
+import type { InputEvent } from "@wildcard/types";
 import { CardCanvas } from "./components/card";
 import { MenuBar, drawMenuBar } from "./components/menubar";
 import { WindowChrome, drawWindow } from "./components/window";
 import { ButtonRenderer, drawButton } from "./components/button";
 import { FieldRenderer, drawField } from "./components/field";
 import type { ToolName } from "./tools/tool";
+import type { EngineBridge } from "./bridge";
 
 export interface RenderState {
   /** Active theme */
@@ -67,6 +69,9 @@ export class RenderLoop {
 
   private _frameCount = 0;
   private _lastFrameTime = 0;
+
+  /** Optional bridge for routing input events to the WASM engine. */
+  private _bridge: EngineBridge | null = null;
 
   constructor(ctx: CanvasRenderingContext2D, theme: Theme) {
     this._ctx = ctx;
@@ -116,6 +121,30 @@ export class RenderLoop {
 
   get frameCount(): number {
     return this._frameCount;
+  }
+
+  get bridge(): EngineBridge | null {
+    return this._bridge;
+  }
+
+  /**
+   * Attach an EngineBridge for routing input events to the WASM engine.
+   * When set, input events dispatched via `dispatchInputEvent` will be
+   * forwarded to the engine, and engine output events will update renderer state.
+   */
+  setBridge(bridge: EngineBridge): void {
+    this._bridge = bridge;
+    bridge.setRenderer(this);
+  }
+
+  /**
+   * Dispatch an input event. If a bridge is attached, the event is routed
+   * to the WASM engine; otherwise it is a no-op.
+   */
+  dispatchInputEvent(event: InputEvent): void {
+    if (this._bridge) {
+      this._bridge.sendInputEvent(event);
+    }
   }
 
   setState(updates: Partial<RenderState>): void {

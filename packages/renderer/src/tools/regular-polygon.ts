@@ -121,13 +121,7 @@ export class RegularPolygonTool implements Tool {
     }
   }
 
-  private _drawLine(
-    x0: number,
-    y0: number,
-    x1: number,
-    y1: number,
-    lineSize: number,
-  ): void {
+  private _drawLine(x0: number, y0: number, x1: number, y1: number, lineSize: number): void {
     if (!this._canvas) return;
     const dx = Math.abs(x1 - x0);
     const dy = Math.abs(y1 - y0);
@@ -146,8 +140,14 @@ export class RegularPolygonTool implements Tool {
       }
       if (cx === x1 && cy === y1) break;
       const e2 = err * 2;
-      if (e2 > -dy) { err -= dy; cx += sx; }
-      if (e2 < dx) { err += dx; cy += sy; }
+      if (e2 > -dy) {
+        err -= dy;
+        cx += sx;
+      }
+      if (e2 < dx) {
+        err += dx;
+        cy += sy;
+      }
     }
   }
 

@@ -1,6 +1,9 @@
 // Engine events: WASM engine → JS renderer
 export type EngineEvent =
-  | { type: "GoToCard"; payload: { cardId: string; direction?: "next" | "prev" | "first" | "last" | "direct" } }
+  | {
+      type: "GoToCard";
+      payload: { cardId: string; direction?: "next" | "prev" | "first" | "last" | "direct" };
+    }
   | { type: "SetField"; payload: { fieldId: string; content: string } }
   | { type: "PlaySound"; payload: { sound: string } }
   | { type: "ShowMessage"; payload: { message: string; style: "answer" | "ask" } }
