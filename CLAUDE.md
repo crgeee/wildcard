@@ -296,10 +296,17 @@ This catches formatting/lint issues locally before they fail in CI.
 - [x] Phase 4: Integration (engine bridge, localStorage persistence, CI fixes, pre-commit hooks) — 215 tests
 - [x] Phase 5: Web app (Preact SPA, Hono API, gallery, SSR/SEO, moderation, HTML export) — 304 tests
 - [x] Phase 6: Historical content (onboarding stack, learn pages, 4 starter templates)
+- [x] Phase 7: Polish & deploy (service worker, offline support, Hetzner deploy config) — 308 tests
 
-### Next Up
+### All Phases Complete
 
-- [ ] Phase 7: Polish & deploy (service worker, Lighthouse, Hetzner deployment)
+Remaining pre-launch tasks:
+
+- [ ] Lighthouse audit (target 90+) — run after deploying to Hetzner
+- [ ] GitHub branch protection rules
+- [ ] DNS setup (wildcard.you → Hetzner VPS IP)
+- [ ] First deploy via `deploy/setup.sh` + `deploy/deploy.sh`
+- [ ] Re-enable Dependabot for security patches
 
 ## Legal
 
