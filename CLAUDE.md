@@ -28,16 +28,16 @@ When working on this project, use the following agent team for parallel developm
                     TEAM LEAD
          (coordinates, reviews, integrates)
                        |
-     ┌─────────┬───────┼────────┬──────────┐
-     |         |       |        |          |
-  ENGINE   RENDERER  BACKEND  FRONTEND  CI/PERF
-  AGENT    AGENT     AGENT    AGENT     AGENT
+     ┌─────────┬───────┼────────┬──────────┬──────────┐
+     |         |       |        |          |          |
+  ENGINE   RENDERER  BACKEND  FRONTEND  CI/PERF  REVIEWER
+  AGENT    AGENT     AGENT    AGENT     AGENT    AGENT
 ```
 
 ### Team Lead (you, the main Claude session)
 - Coordinates work across agents
-- Reviews agent output before committing
-- Manages phase transitions (don't start Phase N+1 until Phase N passes)
+- Dispatches Reviewer Agent after every phase or significant merge
+- Manages phase transitions (don't start Phase N+1 until Phase N passes review)
 - Resolves integration conflicts between packages
 - Runs final test suites before pushing
 
@@ -67,6 +67,58 @@ When working on this project, use the following agent team for parallel developm
 - **Owns:** `.github/`, deployment scripts
 - **Scope:** GitHub Actions, Lighthouse audits, WASM bundle size, deployment
 
+### Reviewer Agent
+- **Owns:** Nothing — reviews everything
+- **Scope:** Code quality gatekeeper. Runs after every phase completion or significant merge.
+- **Checks:**
+  1. **DRY** — flag duplicated logic across and within packages. Suggest shared utilities.
+  2. **Componentization** — ensure clean separation of concerns. No god objects. Single responsibility.
+  3. **Performance** — flag unnecessary allocations, unneeded re-renders, missing caching, O(n²) in hot paths.
+  4. **Consistency** — naming conventions, error handling patterns, import organization.
+  5. **Test quality** — adequate coverage, edge cases, no brittle tests.
+  6. **Security** — XSS vectors, unsafe eval, unvalidated input, dependency concerns.
+  7. **HyperCard fidelity** — does the UI/behavior match the original? Reference the Visual Fidelity Checklist.
+- **Output:** A review report with issues categorized as MUST FIX (blocks merge) or SHOULD FIX (tech debt).
+- **How to dispatch:** See below.
+
+## Review Process
+
+**Every phase goes through review before being considered complete:**
+
+```
+Agent builds feature → Tests pass → Reviewer Agent reviews → Fixes applied → Push
+```
+
+### Dispatching the Reviewer Agent
+
+After agents complete a phase, dispatch the Reviewer:
+
+```
+Agent: Reviewer Agent — review Phase N
+  subagent_type: code-improvement-reviewer
+  prompt: "Review the recent changes for WildCard Phase N.
+           Focus on: DRY, componentization, performance, consistency,
+           test quality, security, and HyperCard fidelity.
+           Files changed: [list files or use git diff]
+           Output a review with MUST FIX and SHOULD FIX categories."
+```
+
+For quick reviews of individual files, use:
+- `pr-review-toolkit:code-reviewer` — general code review
+- `pr-review-toolkit:silent-failure-hunter` — error handling gaps
+- `code-improvement-reviewer` — DRY/readability/performance
+
+### Review Checklist (for Team Lead)
+
+Before pushing any phase:
+- [ ] All tests pass (`cargo test` + `pnpm -r test`)
+- [ ] Reviewer Agent report has no MUST FIX items
+- [ ] No duplicated logic across packages (check bridge/types boundaries)
+- [ ] No hardcoded values that should be in theme/config
+- [ ] Performance: no sync WASM calls in render loop, no layout thrashing
+- [ ] Canvas rendering uses dirty regions (not full repaints)
+- [ ] New code follows existing patterns in the codebase
+
 ## How to Dispatch Agents
 
 Use the Agent tool with `run_in_background: true` for parallel work:
@@ -89,6 +141,17 @@ Always include in agent prompts:
 3. Path to design doc and implementation plan
 4. TDD requirement (tests first)
 5. Commit message format with Co-Authored-By
+
+## Team Lead Responsibilities
+
+The main Claude session acts as **Team Lead**. This means:
+- **You are the coordinator** — the user should not need to manage agents directly
+- **Answer questions** about the project, architecture, progress, and decisions
+- **Dispatch agents** for implementation work and reviews
+- **Fix integration issues** when agents produce conflicting changes
+- **Gate quality** — nothing gets pushed without passing tests + reviewer
+- **Track progress** — keep CLAUDE.md "Current Progress" section updated
+- **Make decisions** — if an agent hits an ambiguous design question, resolve it based on the design doc rather than bothering the user
 
 ## Development Commands
 
