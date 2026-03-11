@@ -1,4 +1,18 @@
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach, vi } from "vitest";
+
+// Polyfill ImageData for Node/Vitest (not available outside browser)
+if (typeof globalThis.ImageData === "undefined") {
+  (globalThis as any).ImageData = class ImageData {
+    width: number;
+    height: number;
+    data: Uint8ClampedArray;
+    constructor(w: number, h: number) {
+      this.width = w;
+      this.height = h;
+      this.data = new Uint8ClampedArray(w * h * 4);
+    }
+  };
+}
 import type { Tool, ToolEvent, PaintConfig } from "../tools/tool";
 import { TOOL_ORDER, TOOL_DISPLAY_NAMES, defaultPaintConfig } from "../tools/tool";
 import { BrowseTool } from "../tools/browse";
@@ -207,7 +221,8 @@ describe("ToolPalette", () => {
     const rect = palette.getRect();
     const toolSize = classicTheme.metrics.toolIconSize;
     // Click first tool (top-left of palette content area)
-    const hit = palette.hitTestTool(rect.x + 4, rect.y + classicTheme.metrics.titleBarHeight + 4);
+    // Content area starts at PALETTE_PADDING(4) + 1(border) = 5px from rect edge
+    const hit = palette.hitTestTool(rect.x + 6, rect.y + classicTheme.metrics.titleBarHeight + 6);
     expect(hit).not.toBeNull();
   });
 });
