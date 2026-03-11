@@ -1,8 +1,7 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import { MenuBar, type MenuDef, type MenuItemDef } from "../components/menubar";
+import { MenuBar, type MenuDef } from "../components/menubar";
 import { classicTheme } from "../themes/classic";
 import { v3Theme } from "../themes/v3";
-import type { Theme } from "../theme";
 
 const FILE_MENU: MenuDef = {
   title: "File",

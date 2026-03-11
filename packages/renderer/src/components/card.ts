@@ -11,7 +11,7 @@
  */
 
 import type { Theme } from "../theme";
-import type { WildCardObject, Rect } from "@wildcard/types";
+import type { WildCardObject } from "@wildcard/types";
 
 export interface DirtyRect {
   x: number;

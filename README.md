@@ -1,6 +1,6 @@
 # WildCard
 
-*The HyperCard 3.0 that Apple never shipped.*
+_The HyperCard 3.0 that Apple never shipped._
 
 WildCard is an open-source, web-based reimagining of HyperCard — the legendary
 hypermedia tool created by Bill Atkinson in 1987. Build interactive stories, games,
@@ -17,12 +17,12 @@ an English-like scripting language.
 
 ## Packages
 
-| Package | Description |
-|---------|-------------|
-| `@wildcard/engine` | Rust/WASM — WildTalk interpreter and stack runtime |
-| `@wildcard/renderer` | TypeScript — Canvas 2D retro Mac rendering engine |
-| `@wildcard/types` | TypeScript — shared types and FFI bridge |
-| `wildcard-web` | TypeScript — web app (editor, player, gallery) |
+| Package              | Description                                        |
+| -------------------- | -------------------------------------------------- |
+| `@wildcard/engine`   | Rust/WASM — WildTalk interpreter and stack runtime |
+| `@wildcard/renderer` | TypeScript — Canvas 2D retro Mac rendering engine  |
+| `@wildcard/types`    | TypeScript — shared types and FFI bridge           |
+| `wildcard-web`       | TypeScript — web app (editor, player, gallery)     |
 
 ## Getting Started
 

@@ -1,12 +1,12 @@
-pub mod token;
-pub mod lexer;
 pub mod ast;
+pub mod interpreter;
+pub mod lexer;
 pub mod parser;
 pub mod runtime;
-pub mod interpreter;
+pub mod token;
 
-use wasm_bindgen::prelude::*;
 use runtime::Runtime;
+use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
 pub struct WildCardEngine {
@@ -193,9 +193,7 @@ mod tests {
     #[test]
     fn test_wasm_set_property_event() {
         let mut engine = WildCardEngine::new();
-        engine.load_script(
-            "on test\n  set the color of button \"submit\" to \"red\"\nend test",
-        );
+        engine.load_script("on test\n  set the color of button \"submit\" to \"red\"\nend test");
         let events = engine.send_message("test");
         assert!(events.contains("SetProperty"));
         assert!(events.contains("color"));
@@ -214,9 +212,7 @@ mod tests {
     #[test]
     fn test_wasm_show_hide_events() {
         let mut engine = WildCardEngine::new();
-        engine.load_script(
-            "on test\n  show button \"Go\"\n  hide field \"secret\"\nend test",
-        );
+        engine.load_script("on test\n  show button \"Go\"\n  hide field \"secret\"\nend test");
         let events = engine.send_message("test");
         assert!(events.contains("ShowObject"));
         assert!(events.contains("HideObject"));

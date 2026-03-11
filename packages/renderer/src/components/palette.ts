@@ -237,7 +237,9 @@ export function drawPalette(
   }
 
   // Tool icons
-  const startY = state.isMobileDrawer ? rect.y + state.padding : rect.y + state.titleBarHeight + state.padding;
+  const startY = state.isMobileDrawer
+    ? rect.y + state.padding
+    : rect.y + state.titleBarHeight + state.padding;
   const startX = rect.x + state.padding + 1;
 
   for (let i = 0; i < state.tools.length; i++) {
@@ -275,11 +277,7 @@ export function drawPalette(
     ctx.font = `bold ${Math.floor(state.iconSize * 0.5)}px ${theme.fonts.system}`;
     ctx.textBaseline = "middle";
     ctx.textAlign = "center";
-    ctx.fillText(
-      tool.displayName.charAt(0),
-      x + state.iconSize / 2,
-      y + state.iconSize / 2,
-    );
+    ctx.fillText(tool.displayName.charAt(0), x + state.iconSize / 2, y + state.iconSize / 2);
     ctx.textAlign = "left";
   }
 }

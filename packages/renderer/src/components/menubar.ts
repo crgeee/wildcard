@@ -397,7 +397,11 @@ export function drawMenuBar(ctx: CanvasRenderingContext2D, state: MenuBarRenderS
       if (item.shortcut) {
         const shortcutText = `\u2318${item.shortcut}`;
         const shortcutWidth = ctx.measureText(shortcutText).width;
-        ctx.fillText(shortcutText, dropdownRect.x + dropdownRect.width - shortcutWidth - 12, itemY + 9);
+        ctx.fillText(
+          shortcutText,
+          dropdownRect.x + dropdownRect.width - shortcutWidth - 12,
+          itemY + 9,
+        );
       }
 
       itemY += 18;

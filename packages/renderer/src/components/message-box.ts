@@ -148,9 +148,7 @@ export class MessageBox {
 
     if (key === "Backspace") {
       if (this._cursorPos > 0) {
-        this._text =
-          this._text.slice(0, this._cursorPos - 1) +
-          this._text.slice(this._cursorPos);
+        this._text = this._text.slice(0, this._cursorPos - 1) + this._text.slice(this._cursorPos);
         this._cursorPos--;
       }
       return true;
@@ -173,8 +171,7 @@ export class MessageBox {
 
     // Printable character
     if (key.length === 1 && !modifiers.includes("Meta") && !modifiers.includes("Control")) {
-      this._text =
-        this._text.slice(0, this._cursorPos) + key + this._text.slice(this._cursorPos);
+      this._text = this._text.slice(0, this._cursorPos) + key + this._text.slice(this._cursorPos);
       this._cursorPos++;
       return true;
     }

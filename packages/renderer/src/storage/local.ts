@@ -121,9 +121,7 @@ export interface AutoSaver {
  * Create a standalone auto-saver instance with its own timer state.
  * Useful when multiple independent save contexts are needed.
  */
-export function createAutoSaver(
-  debounceMs = AUTOSAVE_DEBOUNCE_MS,
-): AutoSaver {
+export function createAutoSaver(debounceMs = AUTOSAVE_DEBOUNCE_MS): AutoSaver {
   let timer: ReturnType<typeof setTimeout> | null = null;
 
   return {

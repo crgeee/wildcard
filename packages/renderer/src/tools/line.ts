@@ -99,13 +99,7 @@ export class LineTool implements Tool {
     };
   }
 
-  private _drawLine(
-    x0: number,
-    y0: number,
-    x1: number,
-    y1: number,
-    lineSize: number,
-  ): void {
+  private _drawLine(x0: number, y0: number, x1: number, y1: number, lineSize: number): void {
     if (!this._canvas) return;
 
     const dx = Math.abs(x1 - x0);

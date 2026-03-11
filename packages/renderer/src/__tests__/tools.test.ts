@@ -1,7 +1,8 @@
-import { describe, it, expect, beforeEach, vi } from "vitest";
+import { describe, it, expect, beforeEach } from "vitest";
 
 // Polyfill ImageData for Node/Vitest (not available outside browser)
 if (typeof globalThis.ImageData === "undefined") {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (globalThis as any).ImageData = class ImageData {
     width: number;
     height: number;
@@ -13,7 +14,7 @@ if (typeof globalThis.ImageData === "undefined") {
     }
   };
 }
-import type { Tool, ToolEvent, PaintConfig } from "../tools/tool";
+import type { Tool } from "../tools/tool";
 import { TOOL_ORDER, TOOL_DISPLAY_NAMES, defaultPaintConfig } from "../tools/tool";
 import { BrowseTool } from "../tools/browse";
 import { ButtonTool } from "../tools/button-tool";
@@ -113,8 +114,22 @@ describe("BrowseTool", () => {
   });
 
   it("tracks clicked object ID", () => {
-    browse.onMouseDown({ x: 100, y: 100, shiftKey: false, optionKey: false, commandKey: false, button: 0 });
-    browse.onMouseUp({ x: 100, y: 100, shiftKey: false, optionKey: false, commandKey: false, button: 0 });
+    browse.onMouseDown({
+      x: 100,
+      y: 100,
+      shiftKey: false,
+      optionKey: false,
+      commandKey: false,
+      button: 0,
+    });
+    browse.onMouseUp({
+      x: 100,
+      y: 100,
+      shiftKey: false,
+      optionKey: false,
+      commandKey: false,
+      button: 0,
+    });
     // Browse tool emits events — we test the state machine transitions
     expect(browse.isMouseDown).toBe(false);
   });
@@ -140,9 +155,23 @@ describe("PencilTool", () => {
 
   it("tracks drawing state", () => {
     expect(pencil.isDrawing).toBe(false);
-    pencil.onMouseDown({ x: 10, y: 10, shiftKey: false, optionKey: false, commandKey: false, button: 0 });
+    pencil.onMouseDown({
+      x: 10,
+      y: 10,
+      shiftKey: false,
+      optionKey: false,
+      commandKey: false,
+      button: 0,
+    });
     expect(pencil.isDrawing).toBe(true);
-    pencil.onMouseUp({ x: 20, y: 20, shiftKey: false, optionKey: false, commandKey: false, button: 0 });
+    pencil.onMouseUp({
+      x: 20,
+      y: 20,
+      shiftKey: false,
+      optionKey: false,
+      commandKey: false,
+      button: 0,
+    });
     expect(pencil.isDrawing).toBe(false);
   });
 });
@@ -158,17 +187,43 @@ describe("LineTool", () => {
   });
 
   it("constrains to 45-degree angles with shift key", () => {
-    line.onMouseDown({ x: 10, y: 10, shiftKey: false, optionKey: false, commandKey: false, button: 0 });
-    const constrained = line.constrainEndPoint(
-      { x: 50, y: 15, shiftKey: true, optionKey: false, commandKey: false, button: 0 },
-    );
+    line.onMouseDown({
+      x: 10,
+      y: 10,
+      shiftKey: false,
+      optionKey: false,
+      commandKey: false,
+      button: 0,
+    });
+    const constrained = line.constrainEndPoint({
+      x: 50,
+      y: 15,
+      shiftKey: true,
+      optionKey: false,
+      commandKey: false,
+      button: 0,
+    });
     // Should snap to horizontal (y should equal start y)
     expect(constrained.y).toBe(10);
   });
 
   it("has overlay showing line preview", () => {
-    line.onMouseDown({ x: 10, y: 10, shiftKey: false, optionKey: false, commandKey: false, button: 0 });
-    line.onMouseMove({ x: 50, y: 50, shiftKey: false, optionKey: false, commandKey: false, button: 0 });
+    line.onMouseDown({
+      x: 10,
+      y: 10,
+      shiftKey: false,
+      optionKey: false,
+      commandKey: false,
+      button: 0,
+    });
+    line.onMouseMove({
+      x: 50,
+      y: 50,
+      shiftKey: false,
+      optionKey: false,
+      commandKey: false,
+      button: 0,
+    });
     const overlay = line.getOverlay();
     expect(overlay).not.toBeNull();
     expect(overlay!.type).toBe("line");
@@ -219,7 +274,7 @@ describe("ToolPalette", () => {
 
   it("hit-tests tool icons", () => {
     const rect = palette.getRect();
-    const toolSize = classicTheme.metrics.toolIconSize;
+    const _toolSize = classicTheme.metrics.toolIconSize;
     // Click first tool (top-left of palette content area)
     // Content area starts at PALETTE_PADDING(4) + 1(border) = 5px from rect edge
     const hit = palette.hitTestTool(rect.x + 6, rect.y + classicTheme.metrics.titleBarHeight + 6);

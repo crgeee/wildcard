@@ -1,6 +1,6 @@
 # WildCard — Project Guide
 
-*"The HyperCard 3.0 that Apple never shipped."*
+_"The HyperCard 3.0 that Apple never shipped."_
 
 **Domain:** wildcard.you
 **Repo:** https://github.com/crgeee/wildcard
@@ -35,6 +35,7 @@ When working on this project, use the following agent team for parallel developm
 ```
 
 ### Team Lead (you, the main Claude session)
+
 - Coordinates work across agents
 - Dispatches Reviewer Agent after every phase or significant merge
 - Manages phase transitions (don't start Phase N+1 until Phase N passes review)
@@ -42,30 +43,40 @@ When working on this project, use the following agent team for parallel developm
 - Runs final test suites before pushing
 
 ### Engine Agent
+
 - **Owns:** `packages/engine/` (Rust), `packages/types/` (TypeScript)
 - **Scope:** WildTalk lexer, parser, AST, interpreter, WASM build, FFI bridge
 - **Tests:** `cargo test` must pass before any commit
 - **Build:** `wasm-pack build --target web` must succeed
 
 ### Renderer Agent
+
 - **Owns:** `packages/renderer/` (TypeScript)
 - **Scope:** Canvas 2D rendering, themes (Classic + 3.0), paint tools, UI components, responsive layout
 - **Tests:** `pnpm test` from `packages/renderer/`
 - **Critical:** Must reference real HyperCard screenshots. Use Visual Fidelity Checklist in design doc.
 
 ### Backend Agent
+
 - **Owns:** `apps/web/src/server/`
 - **Scope:** Hono API, PostgreSQL, auth, gallery, content moderation, S3 storage
 - **Tests:** `pnpm test` from `apps/web/`
 
 ### Frontend Agent
+
 - **Owns:** `apps/web/src/` (client-side)
 - **Scope:** Preact SPA, routing, editor/player/gallery pages, SEO, legal pages
 - **Tests:** `pnpm test` from `apps/web/`
 
 ### CI/Perf & Cost Agent
+
 - **Owns:** `.github/`, deployment scripts, infrastructure
 - **Scope:** GitHub Actions, Lighthouse audits, WASM bundle size, deployment, cost monitoring
+- **Local quality gates:**
+  - Maintain pre-commit hooks (Husky + lint-staged) to catch formatting/lint issues before CI
+  - Ensure `pnpm format:check`, `pnpm -r lint`, `cargo fmt --check` all run locally before push
+  - Keep ESLint config (`eslint.config.js`) aligned with CI expectations
+  - If a CI job fails due to formatting/lint, first add a local hook to prevent recurrence
 - **Cost responsibilities:**
   - Hetzner VPS sizing recommendations (start small, scale when needed)
   - Object Storage usage tracking and cost projections
@@ -75,6 +86,7 @@ When working on this project, use the following agent team for parallel developm
   - Recommend cost-effective alternatives as traffic grows
 
 ### SEO/Marketing Agent
+
 - **Owns:** `/learn` pages, meta tags, social cards, sitemap, keyword strategy
 - **Scope:** Discoverability, content strategy, and growth. Has access to Playwright (browser automation) and web search for competitive research.
 - **Tools:** Playwright MCP (browser testing, screenshot comparisons, social card previews), WebSearch/WebFetch (SERP analysis, competitor research)
@@ -99,6 +111,7 @@ When working on this project, use the following agent team for parallel developm
   ```
 
 ### Security & Legal Agent
+
 - **Owns:** Cross-cutting — audits everything for security and legal compliance
 - **Scope:** Security + legal gatekeeper. Runs before any deployment and periodically during development.
 - **Security checks:**
@@ -112,15 +125,7 @@ When working on this project, use the following agent team for parallel developm
   8. **S3/storage** — no public write access, signed URLs for uploads, file type validation
   9. **Secrets** — no hardcoded keys, env vars only, `.env` in `.gitignore`
   10. **Supply chain** — lock files committed, verify dependency integrity
-- **Legal checks:**
-  11. **Trademark compliance** — verify no use of "HyperCard"/"HyperTalk" as product names. Only nominative fair use.
-  12. **Disclaimer presence** — app footer, /legal page, README, gallery ToS all contain required disclaimers
-  13. **License compliance** — all dependencies MIT/Apache compatible. No GPL contamination in the core library.
-  14. **DMCA process** — gallery has working takedown flow, documented in ToS
-  15. **Privacy policy** — GDPR-ready: what data we collect, how we store it, user deletion rights
-  16. **Cookie consent** — if any cookies beyond session, consent banner required
-  17. **ToS for gallery** — content ownership, prohibited content, user responsibilities
-  18. **Open-source license** — MIT license applied correctly, contributor agreement clear
+- **Legal checks:** 11. **Trademark compliance** — verify no use of "HyperCard"/"HyperTalk" as product names. Only nominative fair use. 12. **Disclaimer presence** — app footer, /legal page, README, gallery ToS all contain required disclaimers 13. **License compliance** — all dependencies MIT/Apache compatible. No GPL contamination in the core library. 14. **DMCA process** — gallery has working takedown flow, documented in ToS 15. **Privacy policy** — GDPR-ready: what data we collect, how we store it, user deletion rights 16. **Cookie consent** — if any cookies beyond session, consent banner required 17. **ToS for gallery** — content ownership, prohibited content, user responsibilities 18. **Open-source license** — MIT license applied correctly, contributor agreement clear
 - **Output:** Security report with CRITICAL (blocks deploy), HIGH (blocks merge), MEDIUM (track as issue).
 - **How to dispatch:**
   ```
@@ -131,6 +136,7 @@ When working on this project, use the following agent team for parallel developm
   ```
 
 ### Reviewer Agent
+
 - **Owns:** Nothing — reviews everything
 - **Scope:** Code quality gatekeeper. Runs after every phase completion or significant merge.
 - **Checks:**
@@ -167,6 +173,7 @@ Agent: Reviewer Agent — review Phase N
 ```
 
 For quick reviews of individual files, use:
+
 - `pr-review-toolkit:code-reviewer` — general code review
 - `pr-review-toolkit:silent-failure-hunter` — error handling gaps
 - `code-improvement-reviewer` — DRY/readability/performance
@@ -174,6 +181,7 @@ For quick reviews of individual files, use:
 ### Review Checklist (for Team Lead)
 
 Before pushing any phase:
+
 - [ ] All tests pass (`cargo test` + `pnpm -r test`)
 - [ ] Reviewer Agent report has no MUST FIX items
 - [ ] No duplicated logic across packages (check bridge/types boundaries)
@@ -199,6 +207,7 @@ Agent: Renderer Agent — implement [task]
 ```
 
 Always include in agent prompts:
+
 1. Which agent role they are
 2. The specific task from the implementation plan
 3. Path to design doc and implementation plan
@@ -208,6 +217,7 @@ Always include in agent prompts:
 ## Team Lead Responsibilities
 
 The main Claude session acts as **Team Lead**. This means:
+
 - **You are the coordinator** — the user should not need to manage agents directly
 - **Answer questions** about the project, architecture, progress, and decisions
 - **Dispatch agents** for implementation work and reviews
@@ -219,7 +229,7 @@ The main Claude session acts as **Team Lead**. This means:
 ## Development Commands
 
 ```bash
-# Install dependencies
+# Install dependencies (also sets up Husky pre-commit hooks via `prepare`)
 pnpm install
 
 # Build types (must build first — other packages depend on it)
@@ -241,19 +251,29 @@ pnpm format
 pnpm lint
 ```
 
+### Pre-commit hooks (automatic)
+
+Husky + lint-staged runs on every commit:
+
+- **Prettier** on `*.{ts,tsx,js,jsx,json,css,md,html,yml,yaml}`
+- **rustfmt** on `packages/engine/src/**/*.rs`
+- **cargo fmt --check** as a final gate
+
+This catches formatting/lint issues locally before they fail in CI.
+
 ## Tech Stack
 
-| Layer | Technology |
-|-------|-----------|
-| Engine | Rust → WASM (wasm-bindgen, serde) |
-| Renderer | TypeScript, Canvas 2D API |
-| Types | TypeScript (shared types, FFI bridge) |
-| Web API | Hono (Node) |
-| Web SPA | Preact + Vite |
-| Database | PostgreSQL |
-| Storage | Hetzner Object Storage (S3-compatible) |
-| CI | GitHub Actions |
-| Deploy | Hetzner VPS, pm2, nginx |
+| Layer    | Technology                             |
+| -------- | -------------------------------------- |
+| Engine   | Rust → WASM (wasm-bindgen, serde)      |
+| Renderer | TypeScript, Canvas 2D API              |
+| Types    | TypeScript (shared types, FFI bridge)  |
+| Web API  | Hono (Node)                            |
+| Web SPA  | Preact + Vite                          |
+| Database | PostgreSQL                             |
+| Storage  | Hetzner Object Storage (S3-compatible) |
+| CI       | GitHub Actions                         |
+| Deploy   | Hetzner VPS, pm2, nginx                |
 
 ## Commit Conventions
 
@@ -268,13 +288,15 @@ pnpm lint
 ## Current Progress
 
 ### Completed
+
 - [x] Phase 0: Monorepo scaffolding, CI pipeline, legal files
 - [x] Phase 1: Shared types (stack format, events, FFI contract)
 - [x] Phase 2: WildTalk engine (lexer, parser, interpreter, WASM bridge) — 110 tests
 - [x] Phase 3: Canvas renderer (themes, window chrome, card canvas, tools, script editor, responsive) — 134 tests
+- [x] Phase 4: Integration (engine bridge, localStorage persistence, CI fixes, pre-commit hooks) — 215 tests
 
 ### Next Up
-- [ ] Phase 4: Integration (wire engine WASM to renderer, localStorage persistence)
+
 - [ ] Phase 5: Web app (Vite SPA, Hono API, gallery, auth, moderation, SEO)
 - [ ] Phase 6: Historical content (onboarding stack, learn pages, starter templates)
 - [ ] Phase 7: Polish & deploy (service worker, Lighthouse, Hetzner deployment)

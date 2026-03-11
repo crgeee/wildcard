@@ -4,7 +4,7 @@ import { ButtonRenderer } from "../components/button";
 import { FieldRenderer } from "../components/field";
 import { classicTheme } from "../themes/classic";
 import { v3Theme } from "../themes/v3";
-import type { WildCardButton, WildCardField, ButtonStyle, FieldStyle } from "@wildcard/types";
+import type { ButtonStyle, FieldStyle } from "@wildcard/types";
 import { createButton, createField } from "@wildcard/types";
 
 describe("CardCanvas", () => {

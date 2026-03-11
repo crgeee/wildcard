@@ -19,7 +19,7 @@
  */
 
 import type { Theme } from "./theme";
-import type { WildCardStack, WildCardCard, WildCardObject } from "@wildcard/types";
+import type { WildCardStack, WildCardObject } from "@wildcard/types";
 import type { InputEvent } from "@wildcard/types";
 import { CardCanvas } from "./components/card";
 import { MenuBar, drawMenuBar } from "./components/menubar";

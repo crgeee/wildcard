@@ -14,7 +14,7 @@ import {
   createWildCardApp,
 } from "../bridge";
 import type { IWildCardEngine } from "../bridge";
-import type { EngineEvent } from "@wildcard/types";
+import type { EngineEvent as _EngineEvent } from "@wildcard/types";
 
 // ---------------------------------------------------------------------------
 // Mock engine
@@ -41,7 +41,13 @@ function createMockRenderer() {
     theme: null as unknown,
     stack: null,
     currentCardIndex: 0,
-    objects: [] as Array<{ type: string; id: string; name: string; visible: boolean; [k: string]: unknown }>,
+    objects: [] as Array<{
+      type: string;
+      id: string;
+      name: string;
+      visible: boolean;
+      [k: string]: unknown;
+    }>,
     activeTool: "browse",
     messageBoxVisible: false,
     messageBoxText: "",
@@ -90,9 +96,7 @@ describe("parseEngineEvents", () => {
   });
 
   it("parses GoToCard events", () => {
-    const json = JSON.stringify([
-      { GoToCard: { direction: "next", card_name: null } },
-    ]);
+    const json = JSON.stringify([{ GoToCard: { direction: "next", card_name: null } }]);
     const events = parseEngineEvents(json);
     expect(events).toHaveLength(1);
     expect(events[0].type).toBe("GoToCard");
@@ -102,9 +106,7 @@ describe("parseEngineEvents", () => {
   });
 
   it("parses SetField events", () => {
-    const json = JSON.stringify([
-      { SetField: { field_name: "greeting", content: "Hello" } },
-    ]);
+    const json = JSON.stringify([{ SetField: { field_name: "greeting", content: "Hello" } }]);
     const events = parseEngineEvents(json);
     expect(events).toHaveLength(1);
     expect(events[0].type).toBe("SetField");
@@ -115,9 +117,7 @@ describe("parseEngineEvents", () => {
   });
 
   it("parses ShowMessage events", () => {
-    const json = JSON.stringify([
-      { ShowMessage: { message: "Hello!", style: "answer" } },
-    ]);
+    const json = JSON.stringify([{ ShowMessage: { message: "Hello!", style: "answer" } }]);
     const events = parseEngineEvents(json);
     expect(events).toHaveLength(1);
     expect(events[0].type).toBe("ShowMessage");
@@ -163,9 +163,7 @@ describe("parseEngineEvents", () => {
   });
 
   it("parses ScriptError events", () => {
-    const json = JSON.stringify([
-      { ScriptError: { message: "Unknown command", line: 3 } },
-    ]);
+    const json = JSON.stringify([{ ScriptError: { message: "Unknown command", line: 3 } }]);
     const events = parseEngineEvents(json);
     expect(events).toHaveLength(1);
     expect(events[0].type).toBe("ScriptError");
@@ -195,9 +193,7 @@ describe("parseEngineEvents", () => {
   });
 
   it("maps 'previous' direction to 'prev'", () => {
-    const json = JSON.stringify([
-      { GoToCard: { direction: "previous", card_name: null } },
-    ]);
+    const json = JSON.stringify([{ GoToCard: { direction: "previous", card_name: null } }]);
     const events = parseEngineEvents(json);
     if (events[0].type === "GoToCard") {
       expect(events[0].payload.direction).toBe("prev");
@@ -323,12 +319,21 @@ describe("EngineBridge output routing", () => {
   it("handles SetField by updating renderer objects", () => {
     // Set up objects in renderer state
     renderer.state.objects = [
-      { type: "field", id: "f1", name: "greeting", visible: true, content: "old", style: "rectangle", rect: { x: 0, y: 0, width: 100, height: 30 }, script: "", lockText: false, color: null },
+      {
+        type: "field",
+        id: "f1",
+        name: "greeting",
+        visible: true,
+        content: "old",
+        style: "rectangle",
+        rect: { x: 0, y: 0, width: 100, height: 30 },
+        script: "",
+        lockText: false,
+        color: null,
+      },
     ] as never[];
 
-    const json = JSON.stringify([
-      { SetField: { field_name: "greeting", content: "Hello World" } },
-    ]);
+    const json = JSON.stringify([{ SetField: { field_name: "greeting", content: "Hello World" } }]);
     (engine.send_message as ReturnType<typeof vi.fn>).mockReturnValue(json);
 
     bridge.sendMessage("mouseUp");
@@ -342,9 +347,7 @@ describe("EngineBridge output routing", () => {
   });
 
   it("handles ShowMessage by updating renderer state", () => {
-    const json = JSON.stringify([
-      { ShowMessage: { message: "Welcome!", style: "answer" } },
-    ]);
+    const json = JSON.stringify([{ ShowMessage: { message: "Welcome!", style: "answer" } }]);
     (engine.send_message as ReturnType<typeof vi.fn>).mockReturnValue(json);
 
     bridge.sendMessage("mouseUp");
@@ -375,9 +378,7 @@ describe("EngineBridge output routing", () => {
   });
 
   it("handles ShowObject by setting visible=true", () => {
-    renderer.state.objects = [
-      { type: "button", id: "b1", name: "Go", visible: false },
-    ] as never[];
+    renderer.state.objects = [{ type: "button", id: "b1", name: "Go", visible: false }] as never[];
 
     const json = JSON.stringify([{ ShowObject: { target: "Go" } }]);
     (engine.send_message as ReturnType<typeof vi.fn>).mockReturnValue(json);
@@ -414,24 +415,18 @@ describe("EngineBridge output routing", () => {
     const msgBox = createMockMessageBox();
     bridge.setMessageBox(msgBox as never);
 
-    const json = JSON.stringify([
-      { ScriptError: { message: "Unknown variable", line: 5 } },
-    ]);
+    const json = JSON.stringify([{ ScriptError: { message: "Unknown variable", line: 5 } }]);
     (engine.send_message as ReturnType<typeof vi.fn>).mockReturnValue(json);
 
     bridge.sendMessage("test");
 
-    expect(msgBox.setResult).toHaveBeenCalledWith(
-      "Script error: Unknown variable",
-    );
+    expect(msgBox.setResult).toHaveBeenCalledWith("Script error: Unknown variable");
   });
 
   it("stores GoToCard payload for resolution by WildCardApp", () => {
     bridge.onCardChange(() => {});
 
-    const json = JSON.stringify([
-      { GoToCard: { direction: "next", card_name: null } },
-    ]);
+    const json = JSON.stringify([{ GoToCard: { direction: "next", card_name: null } }]);
     (engine.send_message as ReturnType<typeof vi.fn>).mockReturnValue(json);
 
     bridge.sendMessage("mouseUp");
@@ -710,9 +705,7 @@ describe("WildCardApp", () => {
     });
 
     it("auto-resolves GoToCard events from engine", () => {
-      const goJson = JSON.stringify([
-        { GoToCard: { direction: "next", card_name: null } },
-      ]);
+      const goJson = JSON.stringify([{ GoToCard: { direction: "next", card_name: null } }]);
       (engine.send_message as ReturnType<typeof vi.fn>).mockReturnValue(goJson);
 
       // Need to register card change handler

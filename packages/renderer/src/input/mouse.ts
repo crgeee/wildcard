@@ -63,7 +63,11 @@ export class MouseHandler {
     this._dragStartY = y;
 
     // Detect double-click
-    if (timeDelta < DOUBLE_CLICK_THRESHOLD && dx < DOUBLE_CLICK_DISTANCE && dy < DOUBLE_CLICK_DISTANCE) {
+    if (
+      timeDelta < DOUBLE_CLICK_THRESHOLD &&
+      dx < DOUBLE_CLICK_DISTANCE &&
+      dy < DOUBLE_CLICK_DISTANCE
+    ) {
       if (this.onDoubleClick) {
         this.onDoubleClick(x, y);
       }

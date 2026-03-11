@@ -11,7 +11,7 @@ describe("ScriptEditor", () => {
   });
 
   it("opens with title and content", () => {
-    editor.open("Script of button 'OK'", 'on mouseUp\n  go to next card\nend mouseUp');
+    editor.open("Script of button 'OK'", "on mouseUp\n  go to next card\nend mouseUp");
     expect(editor.isOpen).toBe(true);
     expect(editor.title).toBe("Script of button 'OK'");
     expect(editor.content).toContain("on mouseUp");

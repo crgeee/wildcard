@@ -75,9 +75,7 @@ export class TextTool implements Tool {
 
     if (key === "Backspace") {
       if (this._cursorPos > 0) {
-        this._text =
-          this._text.slice(0, this._cursorPos - 1) +
-          this._text.slice(this._cursorPos);
+        this._text = this._text.slice(0, this._cursorPos - 1) + this._text.slice(this._cursorPos);
         this._cursorPos--;
       }
     } else if (key === "Enter" || key === "Return") {
@@ -91,10 +89,7 @@ export class TextTool implements Tool {
       this._cursorPos = Math.min(this._text.length, this._cursorPos + 1);
     } else if (key.length === 1) {
       // Printable character
-      this._text =
-        this._text.slice(0, this._cursorPos) +
-        key +
-        this._text.slice(this._cursorPos);
+      this._text = this._text.slice(0, this._cursorPos) + key + this._text.slice(this._cursorPos);
       this._cursorPos++;
     }
   }

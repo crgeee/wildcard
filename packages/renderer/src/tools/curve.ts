@@ -112,10 +112,7 @@ export class CurveTool implements Tool {
   ): void {
     if (!this._canvas) return;
 
-    const steps = Math.max(
-      20,
-      Math.ceil(Math.sqrt((p2.x - p1.x) ** 2 + (p2.y - p1.y) ** 2)),
-    );
+    const steps = Math.max(20, Math.ceil(Math.sqrt((p2.x - p1.x) ** 2 + (p2.y - p1.y) ** 2)));
     const half = Math.floor(lineSize / 2);
 
     let lastX = p1.x;
@@ -174,8 +171,14 @@ export class CurveTool implements Tool {
       }
       if (cx === x1 && cy === y1) break;
       const e2 = err * 2;
-      if (e2 > -dy) { err -= dy; cx += sx; }
-      if (e2 < dx) { err += dx; cy += sy; }
+      if (e2 > -dy) {
+        err -= dy;
+        cx += sx;
+      }
+      if (e2 < dx) {
+        err += dx;
+        cy += sy;
+      }
     }
   }
 }

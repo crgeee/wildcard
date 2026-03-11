@@ -93,11 +93,7 @@ export class BucketTool implements Tool {
     this._canvas.markDirty({ x: 0, y: 0, width, height });
   }
 
-  private _getColor(
-    data: ImageData,
-    x: number,
-    y: number,
-  ): [number, number, number, number] {
+  private _getColor(data: ImageData, x: number, y: number): [number, number, number, number] {
     const i = (y * data.width + x) * 4;
     return [data.data[i], data.data[i + 1], data.data[i + 2], data.data[i + 3]];
   }

@@ -200,9 +200,7 @@ function mapRawToWaits(raw: unknown[]): Array<{ index: number; seconds: number }
   return waits;
 }
 
-function mapDirection(
-  dir: string | undefined,
-): "next" | "prev" | "first" | "last" | "direct" {
+function mapDirection(dir: string | undefined): "next" | "prev" | "first" | "last" | "direct" {
   switch (dir) {
     case "next":
       return "next";
@@ -222,9 +220,7 @@ function mapDirection(
  * Extract WaitSeconds delays from the raw JSON.
  * Returns an array of { index, seconds } for sequencing.
  */
-export function extractWaitSeconds(
-  json: string,
-): Array<{ index: number; seconds: number }> {
+export function extractWaitSeconds(json: string): Array<{ index: number; seconds: number }> {
   return mapRawToWaits(safeParseArray(json));
 }
 
@@ -371,7 +367,10 @@ export class EngineBridge {
     }
   }
 
-  private _handleGoToCard(payload: { cardId: string; direction?: "next" | "prev" | "first" | "last" | "direct" }): void {
+  private _handleGoToCard(payload: {
+    cardId: string;
+    direction?: "next" | "prev" | "first" | "last" | "direct";
+  }): void {
     // Always store the payload so WildCardApp.sendMessage can read it,
     // regardless of whether a callback is registered.
     this._lastGoToPayload = payload;
@@ -416,17 +415,10 @@ export class EngineBridge {
   }
 
   private _handleSetField(payload: { fieldId: string; content: string }): void {
-    this._updateObject(
-      payload.fieldId,
-      (obj) => ({ ...obj, content: payload.content }),
-      "field",
-    );
+    this._updateObject(payload.fieldId, (obj) => ({ ...obj, content: payload.content }), "field");
   }
 
-  private _handleShowMessage(payload: {
-    message: string;
-    style: "answer" | "ask";
-  }): void {
+  private _handleShowMessage(payload: { message: string; style: "answer" | "ask" }): void {
     if (!this._renderer) return;
     this._renderer.setState({
       messageBoxVisible: true,
@@ -448,11 +440,7 @@ export class EngineBridge {
     }
   }
 
-  private _handleSetProperty(payload: {
-    objectId: string;
-    property: string;
-    value: string;
-  }): void {
+  private _handleSetProperty(payload: { objectId: string; property: string; value: string }): void {
     this._updateObject(payload.objectId, (obj) => {
       if (payload.property === "color") {
         return { ...obj, color: payload.value };
@@ -476,11 +464,7 @@ export class EngineBridge {
     this._updateObject(payload.objectId, (obj) => ({ ...obj, visible: true }));
   }
 
-  private _handleScriptError(payload: {
-    message: string;
-    line: number;
-    handler: string;
-  }): void {
+  private _handleScriptError(payload: { message: string; line: number; handler: string }): void {
     if (this._messageBox) {
       this._messageBox.setResult(`Script error: ${payload.message}`);
     }
@@ -608,9 +592,7 @@ export class WildCardApp {
       index = target;
     } else {
       // Find card by id or name
-      index = this._stack.cards.findIndex(
-        (c) => c.id === target || c.name === target,
-      );
+      index = this._stack.cards.findIndex((c) => c.id === target || c.name === target);
       if (index === -1) return false;
     }
 
@@ -639,9 +621,7 @@ export class WildCardApp {
 
     switch (payload.direction) {
       case "next":
-        return this.goToCard(
-          Math.min(this._currentCardIndex + 1, cards.length - 1),
-        );
+        return this.goToCard(Math.min(this._currentCardIndex + 1, cards.length - 1));
       case "prev":
         return this.goToCard(Math.max(this._currentCardIndex - 1, 0));
       case "first":
@@ -677,9 +657,7 @@ export class WildCardApp {
     if (!card) return;
 
     // Merge background objects + card objects
-    const bg = this._stack.backgrounds.find(
-      (b) => b.id === card.backgroundId,
-    );
+    const bg = this._stack.backgrounds.find((b) => b.id === card.backgroundId);
     const bgObjects = bg?.objects ?? [];
     const objects = [...bgObjects, ...card.objects];
 
@@ -706,9 +684,7 @@ export interface CreateAppOptions {
  * Create a fully-wired WildCardApp.
  * Loads the WASM engine, creates the bridge, attaches the renderer.
  */
-export async function createWildCardApp(
-  opts: CreateAppOptions,
-): Promise<WildCardApp> {
+export async function createWildCardApp(opts: CreateAppOptions): Promise<WildCardApp> {
   const factory = opts.engineFactory ?? loadWasmEngine;
   const engine = await factory();
   const bridge = new EngineBridge(engine);

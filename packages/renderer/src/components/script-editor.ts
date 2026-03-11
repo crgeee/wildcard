@@ -15,7 +15,14 @@ import type { Theme } from "../theme";
 import type { Rect } from "@wildcard/types";
 
 /** Token types for syntax highlighting */
-export type TokenType = "keyword" | "handler" | "string" | "comment" | "number" | "operator" | "text";
+export type TokenType =
+  | "keyword"
+  | "handler"
+  | "string"
+  | "comment"
+  | "number"
+  | "operator"
+  | "text";
 
 export interface SyntaxToken {
   type: TokenType;
@@ -133,7 +140,7 @@ const HANDLERS = new Set([
 
 const DEFAULT_WIDTH = 350;
 const DEFAULT_HEIGHT = 250;
-const LINE_NUMBER_WIDTH = 35;
+const _LINE_NUMBER_WIDTH = 35;
 
 export class ScriptEditor {
   private _theme: Theme;
@@ -402,7 +409,7 @@ export function drawScriptEditor(
   ctx.clip();
 
   for (let i = 0; i < visibleLines.length; i++) {
-    const { lineIndex, text } = visibleLines[i];
+    const { lineIndex, text: _text } = visibleLines[i];
     const y = contentY + i * lineH;
 
     // Line number

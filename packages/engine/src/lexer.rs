@@ -181,12 +181,7 @@ pub fn lex(input: &str) -> Result<Vec<Token>, String> {
                 if chars.peek() == Some(&'&') {
                     chars.next();
                     col += 1;
-                    tokens.push(Token::new(
-                        TokenKind::DoubleAmpersand,
-                        "&&",
-                        line,
-                        col - 2,
-                    ));
+                    tokens.push(Token::new(TokenKind::DoubleAmpersand, "&&", line, col - 2));
                 } else {
                     tokens.push(Token::new(TokenKind::Ampersand, "&", line, col - 1));
                 }
@@ -462,7 +457,9 @@ mod tests {
 
     #[test]
     fn test_lex_all_statement_keywords() {
-        let tokens = lex("put into set show hide answer ask play sound wait pass send global return fetch").unwrap();
+        let tokens =
+            lex("put into set show hide answer ask play sound wait pass send global return fetch")
+                .unwrap();
         assert_eq!(tokens[0].kind, TokenKind::Put);
         assert_eq!(tokens[1].kind, TokenKind::Into);
         assert_eq!(tokens[2].kind, TokenKind::Set);
@@ -496,7 +493,8 @@ mod tests {
 
     #[test]
     fn test_lex_chunk_keywords() {
-        let tokens = lex("first last line word item character lines words items characters").unwrap();
+        let tokens =
+            lex("first last line word item character lines words items characters").unwrap();
         assert_eq!(tokens[0].kind, TokenKind::First);
         assert_eq!(tokens[1].kind, TokenKind::Last);
         assert_eq!(tokens[2].kind, TokenKind::Line);
