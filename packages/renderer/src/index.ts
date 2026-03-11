@@ -25,9 +25,9 @@ export { TitleBar } from "./components/titlebar";
 export { CardCanvas } from "./components/card";
 export { ButtonRenderer } from "./components/button";
 export { FieldRenderer } from "./components/field";
-export { ToolPalette } from "./components/palette";
-export { ScriptEditor } from "./components/script-editor";
-export { MessageBox } from "./components/message-box";
+export { ToolPalette, drawPalette } from "./components/palette";
+export { ScriptEditor, drawScriptEditor } from "./components/script-editor";
+export { MessageBox, drawMessageBox } from "./components/message-box";
 
 // Render loop
 export { RenderLoop } from "./render-loop";
@@ -47,6 +47,7 @@ export type { IWildCardEngine, EngineFactory, CreateAppOptions } from "./bridge"
 
 // Tools
 export type { Tool, ToolEvent, ToolName } from "./tools/tool";
+export { defaultPaintConfig } from "./tools/tool";
 export { BrowseTool } from "./tools/browse";
 export { ButtonTool } from "./tools/button-tool";
 export { FieldTool } from "./tools/field-tool";
@@ -72,3 +73,6 @@ export { KeyboardHandler } from "./input/keyboard";
 
 // Layout
 export { ResponsiveLayout } from "./layout/responsive";
+
+// Storage
+export { saveStack, loadStack, autoSave, createAutoSaver } from "./storage/local";

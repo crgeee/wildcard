@@ -75,6 +75,23 @@ export class MenuBar {
   setTheme(theme: Theme): void {
     this._theme = theme;
     this._computeTitlePositions();
+    this._updateStyleMenuCheckmarks(theme.name);
+  }
+
+  /**
+   * Update the Style menu checkmarks to reflect the active theme.
+   * Classic gets a check when active; 3.0 gets a check when active.
+   */
+  private _updateStyleMenuCheckmarks(activeTheme: "classic" | "v3"): void {
+    const styleMenu = this._menus.find((m) => m.title === "Style");
+    if (!styleMenu) return;
+    for (const item of styleMenu.items) {
+      if (item.label.includes("Classic")) {
+        item.label = activeTheme === "classic" ? "\u2713 Classic" : "  Classic";
+      } else if (item.label.includes("3.0")) {
+        item.label = activeTheme === "v3" ? "\u2713 3.0" : "  3.0";
+      }
+    }
   }
 
   openMenu(index: number): void {
@@ -293,6 +310,13 @@ export class MenuBar {
           { label: "New Button", shortcut: null, enabled: true },
           { label: "New Field", shortcut: null, enabled: true },
           { label: "New Background", shortcut: null, enabled: true },
+        ],
+      },
+      {
+        title: "Style",
+        items: [
+          { label: "\u2713 Classic", shortcut: null, enabled: true },
+          { label: "  3.0", shortcut: null, enabled: true },
         ],
       },
     ];
