@@ -7,11 +7,13 @@
     "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint src/",
-    "test": "vitest run --passWithNoTests"
+    "test": "vitest run --passWithNoTests",
+    "start": "node dist/server/start.js"
   },
   "dependencies": {
     "@wildcard/renderer": "workspace:*",
     "@wildcard/types": "workspace:*",
+    "@hono/node-server": "^1.13.0",
     "hono": "^4.7.0",
     "preact": "^10.25.0",
     "preact-router": "^4.1.2"
