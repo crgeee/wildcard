@@ -6,14 +6,15 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "lint": "echo 'lint: skipped until Phase 5'",
+    "lint": "eslint src/",
     "test": "vitest run --passWithNoTests"
   },
   "dependencies": {
     "@wildcard/renderer": "workspace:*",
     "@wildcard/types": "workspace:*",
     "hono": "^4.7.0",
-    "preact": "^10.25.0"
+    "preact": "^10.25.0",
+    "preact-router": "^4.1.2"
   },
   "devDependencies": {
     "eslint": "^10.0.3",
