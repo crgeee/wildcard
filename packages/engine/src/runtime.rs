@@ -110,6 +110,7 @@ pub enum EngineOutput {
     },
 }
 
+#[derive(Default)]
 pub struct Runtime {
     pub variables: HashMap<String, Value>,
     pub globals: HashMap<String, Value>,
@@ -122,14 +123,7 @@ pub struct Runtime {
 
 impl Runtime {
     pub fn new() -> Self {
-        Self {
-            variables: HashMap::new(),
-            globals: HashMap::new(),
-            handlers: HashMap::new(),
-            events: Vec::new(),
-            fields: HashMap::new(),
-            current_globals: Vec::new(),
-        }
+        Self::default()
     }
 
     #[cfg(test)]

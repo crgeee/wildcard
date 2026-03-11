@@ -68,14 +68,6 @@ fn peek(tokens: &[Token], pos: usize) -> &TokenKind {
     }
 }
 
-fn peek_text(tokens: &[Token], pos: usize) -> &str {
-    if pos < tokens.len() {
-        &tokens[pos].text
-    } else {
-        ""
-    }
-}
-
 fn current_line(tokens: &[Token], pos: usize) -> usize {
     if pos < tokens.len() {
         tokens[pos].line
@@ -176,14 +168,13 @@ fn parse_statement(tokens: &[Token], pos: &mut usize) -> Result<Statement, Strin
         }
     };
 
-    // Skip to end of line
-    while *pos < tokens.len()
+    // Skip to end of line (if there are remaining tokens on this line)
+    if *pos < tokens.len()
         && tokens[*pos].kind != TokenKind::NewlineTok
         && tokens[*pos].kind != TokenKind::Eof
     {
-        // If we're at a valid statement boundary already (e.g., after parsing
-        // block statements like if/repeat that consume past newlines), break
-        break;
+        // At a valid statement boundary already (e.g., after parsing
+        // block statements like if/repeat that consume past newlines)
     }
 
     result
@@ -195,13 +186,11 @@ fn parse_put(tokens: &[Token], pos: &mut usize) -> Result<Statement, String> {
     expect(tokens, pos, TokenKind::Put)?;
     let value = parse_expression(tokens, pos)?;
 
-    let target = if *pos < tokens.len() && tokens[*pos].kind == TokenKind::Into {
-        *pos += 1;
-        parse_expression(tokens, pos)?
-    } else if *pos < tokens.len() && tokens[*pos].kind == TokenKind::After {
-        *pos += 1;
-        parse_expression(tokens, pos)?
-    } else if *pos < tokens.len() && tokens[*pos].kind == TokenKind::Before {
+    let target = if *pos < tokens.len()
+        && matches!(
+            tokens[*pos].kind,
+            TokenKind::Into | TokenKind::After | TokenKind::Before
+        ) {
         *pos += 1;
         parse_expression(tokens, pos)?
     } else {
@@ -515,11 +504,11 @@ fn parse_send(tokens: &[Token], pos: &mut usize) -> Result<Statement, String> {
     expect(tokens, pos, TokenKind::Send)?;
 
     // "send <message> to <target>"
-    let msg_tok = if *pos < tokens.len() && tokens[*pos].kind == TokenKind::StringLiteral {
-        let t = tokens[*pos].text.clone();
-        *pos += 1;
-        t
-    } else if *pos < tokens.len() && tokens[*pos].kind == TokenKind::Identifier {
+    let msg_tok = if *pos < tokens.len()
+        && matches!(
+            tokens[*pos].kind,
+            TokenKind::StringLiteral | TokenKind::Identifier
+        ) {
         let t = tokens[*pos].text.clone();
         *pos += 1;
         t
