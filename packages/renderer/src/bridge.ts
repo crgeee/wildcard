@@ -53,8 +53,7 @@ export type EngineFactory = () => Promise<IWildCardEngine>;
  */
 export async function loadWasmEngine(): Promise<IWildCardEngine> {
   // Dynamic import so this module can be loaded in non-WASM environments
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const wasm = await import("@wildcard/engine" as any);
+  const wasm = await import("@wildcard/engine");
   await wasm.default(); // init WASM
   return new wasm.WildCardEngine();
 }

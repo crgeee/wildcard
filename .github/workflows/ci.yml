@@ -31,14 +31,6 @@ jobs:
       - run: cd packages/engine && cargo fmt --check
       - run: cd packages/engine && cargo clippy -- -D warnings
 
-  typecheck:
-    name: TypeScript Typecheck
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-      - uses: ./.github/actions/setup
-      - run: pnpm -r build
-
   test-engine:
     name: Test Engine (Rust)
     runs-on: ubuntu-latest
@@ -49,15 +41,6 @@ jobs:
         with:
           workspaces: packages/engine
       - run: cd packages/engine && cargo test
-
-  test-ts:
-    name: Test TypeScript Packages
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-      - uses: ./.github/actions/setup
-      - run: pnpm -r build
-      - run: pnpm -r test
 
   build-wasm:
     name: Build WASM
@@ -70,6 +53,38 @@ jobs:
           workspaces: packages/engine
       - run: cargo install wasm-pack
       - run: cd packages/engine && wasm-pack build --target web
+      - uses: actions/upload-artifact@v4
+        with:
+          name: wasm-pkg
+          path: packages/engine/pkg/
+          retention-days: 1
+
+  typecheck:
+    name: TypeScript Typecheck
+    needs: build-wasm
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup
+      - uses: actions/download-artifact@v4
+        with:
+          name: wasm-pkg
+          path: packages/engine/pkg/
+      - run: pnpm --filter '!@wildcard/engine' -r build
+
+  test-ts:
+    name: Test TypeScript Packages
+    needs: build-wasm
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup
+      - uses: actions/download-artifact@v4
+        with:
+          name: wasm-pkg
+          path: packages/engine/pkg/
+      - run: pnpm --filter '!@wildcard/engine' -r build
+      - run: pnpm --filter '!@wildcard/engine' -r test
 
   security-audit:
     name: Security Audit

@@ -1,0 +1,13 @@
+{
+  "name": "@wildcard/engine",
+  "version": "0.0.1",
+  "type": "module",
+  "main": "pkg/wildcard_engine.js",
+  "types": "pkg/wildcard_engine.d.ts",
+  "files": [
+    "pkg/"
+  ],
+  "scripts": {
+    "build": "wasm-pack build --target web"
+  }
+}
