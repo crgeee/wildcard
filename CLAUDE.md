@@ -273,7 +273,7 @@ This catches formatting/lint issues locally before they fail in CI.
 | Database | PostgreSQL                             |
 | Storage  | Hetzner Object Storage (S3-compatible) |
 | CI       | GitHub Actions                         |
-| Deploy   | Hetzner VPS, pm2, nginx                |
+| Deploy   | Hetzner VPS, pm2 (port 3001), nginx    |
 
 ## Commit Conventions
 

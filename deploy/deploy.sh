@@ -3,38 +3,97 @@
 # WildCard — Deployment script (run on the server to deploy updates)
 #
 # Usage:
-#   cd /opt/wildcard && ./deploy/deploy.sh
+#   cd /var/www/wildcard && ./deploy/deploy.sh
 # ==============================================================================
 
 set -euo pipefail
 
-APP_DIR="/opt/wildcard"
-cd "$APP_DIR"
+APP_DIR="/var/www/wildcard"
+LOCKFILE="/tmp/wildcard-deploy.lock"
+DEPLOY_LOG="/var/log/wildcard-deploy.log"
 
-echo "==> Pulling latest changes..."
+# --- Logging ------------------------------------------------------------------
+log() { echo "[$(date '+%Y-%m-%d %H:%M:%S')] $*" | tee -a "$DEPLOY_LOG"; }
+
+# --- Lockfile (prevent concurrent deploys) ------------------------------------
+if [ -f "$LOCKFILE" ]; then
+  log "ERROR: Deploy already in progress (lockfile exists: $LOCKFILE)"
+  exit 1
+fi
+trap 'rm -f "$LOCKFILE"' EXIT
+touch "$LOCKFILE"
+
+# --- Rollback on failure ------------------------------------------------------
+PREV_COMMIT=""
+rollback() {
+  log "ERROR: Deploy failed! Rolling back..."
+  if [ -n "$PREV_COMMIT" ]; then
+    cd "$APP_DIR"
+    git checkout "$PREV_COMMIT" -- .
+    log "Rolled back to $PREV_COMMIT"
+  fi
+  pm2 reload deploy/ecosystem.config.cjs 2>/dev/null || true
+  log "Rollback complete. Check logs: pm2 logs wildcard"
+}
+trap 'rollback; rm -f "$LOCKFILE"' ERR
+
+cd "$APP_DIR"
+PREV_COMMIT=$(git rev-parse HEAD)
+
+# --- Load nvm if present (matches reps pattern) ------------------------------
+export NVM_DIR="${HOME}/.nvm"
+if [ -s "$NVM_DIR/nvm.sh" ]; then
+  source "$NVM_DIR/nvm.sh"
+fi
+
+log "==> Deploying WildCard (from $PREV_COMMIT)"
+
+# --- Pull latest changes -----------------------------------------------------
+log "==> Pulling latest changes..."
 git pull origin main
 
-echo "==> Installing dependencies..."
+NEW_COMMIT=$(git rev-parse HEAD)
+if [ "$PREV_COMMIT" = "$NEW_COMMIT" ]; then
+  log "==> No new changes to deploy."
+  exit 0
+fi
+log "==> Updating $PREV_COMMIT → $NEW_COMMIT"
+
+# --- Install dependencies ----------------------------------------------------
+log "==> Installing dependencies..."
 pnpm install --frozen-lockfile
 
-echo "==> Building WASM engine..."
+# --- Build WASM engine -------------------------------------------------------
+log "==> Building WASM engine..."
+source "$HOME/.cargo/env" 2>/dev/null || true
 cd packages/engine && wasm-pack build --target web && cd "$APP_DIR"
 
-echo "==> Building all packages..."
+# --- Build all packages -------------------------------------------------------
+log "==> Building all packages..."
 pnpm -r build
 
-echo "==> Reloading pm2 (zero-downtime)..."
-pm2 reload deploy/ecosystem.config.cjs
+# --- Stop, then start (safe for fork mode) ------------------------------------
+log "==> Restarting pm2..."
+pm2 stop wildcard 2>/dev/null || true
+pm2 start deploy/ecosystem.config.cjs
 
-echo "==> Waiting for server to start..."
+# --- Sync nginx config --------------------------------------------------------
+if ! diff -q deploy/nginx.conf /etc/nginx/sites-available/wildcard > /dev/null 2>&1; then
+  log "==> Nginx config changed, updating..."
+  cp deploy/nginx.conf /etc/nginx/sites-available/wildcard
+  nginx -t && systemctl reload nginx
+  log "==> Nginx reloaded"
+fi
+
+# --- Health check -------------------------------------------------------------
+log "==> Waiting for server to start..."
 sleep 2
 
-echo "==> Health check..."
-if curl -sf http://localhost:3000/api/health > /dev/null; then
-  echo "    OK — server is healthy"
+if curl -sf http://localhost:3001/api/health > /dev/null; then
+  log "==> Health check passed"
 else
-  echo "    WARN — health check failed, check logs: pm2 logs wildcard"
+  log "==> WARN: Health check failed, check logs: pm2 logs wildcard"
   exit 1
 fi
 
-echo "==> Deployment complete!"
+log "==> Deploy complete! ($PREV_COMMIT → $NEW_COMMIT)"
