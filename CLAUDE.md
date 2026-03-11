@@ -295,10 +295,10 @@ This catches formatting/lint issues locally before they fail in CI.
 - [x] Phase 3: Canvas renderer (themes, window chrome, card canvas, tools, script editor, responsive) — 134 tests
 - [x] Phase 4: Integration (engine bridge, localStorage persistence, CI fixes, pre-commit hooks) — 215 tests
 - [x] Phase 5: Web app (Preact SPA, Hono API, gallery, SSR/SEO, moderation, HTML export) — 304 tests
+- [x] Phase 6: Historical content (onboarding stack, learn pages, 4 starter templates)
 
 ### Next Up
 
-- [ ] Phase 6: Historical content (onboarding stack, learn pages, starter templates)
 - [ ] Phase 7: Polish & deploy (service worker, Lighthouse, Hetzner deployment)
 
 ## Legal
