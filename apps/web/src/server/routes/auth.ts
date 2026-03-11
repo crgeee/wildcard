@@ -35,13 +35,19 @@ export function resetAuth(): void {
 
 const authRoutes = new Hono();
 
-/**
- * POST /api/auth/register — register a new user (stub).
- *
- * TODO: Hash password with bcrypt (cost factor >= 12).
- * TODO: Validate email format properly.
- * TODO: Send verification email.
- */
+// ---------------------------------------------------------------------------
+// Production guard — these are stubs with plaintext passwords and fake JWTs.
+// They must NOT be accessible in production until replaced with real auth.
+// Set AUTH_ENABLED=true in env to opt-in (only after implementing bcrypt+JWT).
+// ---------------------------------------------------------------------------
+
+authRoutes.use("*", async (c, next) => {
+  if (process.env.NODE_ENV === "production" && process.env.AUTH_ENABLED !== "true") {
+    return c.json(errorJson(503, "Auth is not yet available"), 503);
+  }
+  return next();
+});
+
 authRoutes.post("/register", async (c) => {
   const b = await parseJsonBody(c);
   if (!b) {

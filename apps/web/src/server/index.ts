@@ -26,7 +26,9 @@ const app = new Hono();
 app.use(
   "*",
   cors({
-    origin: process.env.ALLOWED_ORIGIN ?? "http://localhost:5173",
+    origin:
+      process.env.ALLOWED_ORIGIN ??
+      (process.env.NODE_ENV === "production" ? "" : "http://localhost:5173"),
     allowMethods: ["GET", "POST", "PATCH", "DELETE"],
     allowHeaders: ["Content-Type", "Authorization"],
     maxAge: 86400,

@@ -1,8 +1,8 @@
 #!/bin/bash
 # ==============================================================================
-# WildCard — Add to existing Hetzner VPS (alongside reps)
+# WildCard — Add to existing Hetzner VPS
 #
-# Prerequisites: Node.js, pnpm, pm2, nginx, certbot already installed (via reps)
+# Prerequisites: Node.js, pnpm, pm2, nginx, certbot already installed.
 # This script only adds WildCard — it does NOT reinstall system packages.
 #
 # Run as root (or with sudo):
@@ -74,7 +74,7 @@ echo ""
 echo "=============================================="
 echo "  WildCard setup complete!"
 echo "  Site: https://wildcard.you"
-echo "  Port: 3001 (reps remains on 3000)"
+echo "  Port: 3001"
 echo "  Logs: pm2 logs wildcard"
 echo "  Status: pm2 status"
 echo "=============================================="

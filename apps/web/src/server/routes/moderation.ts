@@ -65,9 +65,19 @@ export function resetModeration(): void {
 // ---------------------------------------------------------------------------
 
 function isAdmin(authHeader: string | undefined): boolean {
-  // Stub: any token starting with "admin-" is treated as admin.
   if (!authHeader || !authHeader.startsWith("Bearer ")) return false;
-  return authHeader.replace("Bearer ", "").startsWith("admin-");
+  const token = authHeader.replace("Bearer ", "");
+
+  // In production, require ADMIN_TOKEN env var (a real secret).
+  // In dev/test, accept any token starting with "admin-" for convenience.
+  const adminToken = process.env.ADMIN_TOKEN;
+  if (adminToken) {
+    return token === adminToken;
+  }
+  if (process.env.NODE_ENV === "production") {
+    return false; // No ADMIN_TOKEN set in production = no admin access
+  }
+  return token.startsWith("admin-");
 }
 
 // ---------------------------------------------------------------------------
